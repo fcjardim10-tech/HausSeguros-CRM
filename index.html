@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Haus Seguros — CRM</title>
+<meta name="description" content="CRM Operacional de Seguros — Haus Seguros">
+<meta name="theme-color" content="#1A1916">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Haus CRM">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Favicon SVG inline -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231A1916'/><text x='16' y='22' text-anchor='middle' font-size='18' font-weight='700' fill='white' font-family='sans-serif'>H</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#F7F6F3; --sf:#FFF; --sf2:#F0EEE9; --sf3:#E8E6E0;
+  --bd:#E2DFD8; --bd2:#CCCAC2;
+  --tx:#1A1916; --tx2:#6B6860; --tx3:#9E9C96;
+  --r:#C0392B; --rb:#FDF0EF; --rbr:#F5C6C2;
+  --a:#B7600A; --ab:#FEF6EC; --abr:#F9DCBA;
+  --g:#1F6B3A; --gb:#EFF8F2; --gbr:#B8E2C8;
+  --bl:#1A4E8C; --blb:#EEF4FD; --blbr:#BACED8;
+  --pu:#5B3FA6; --pub:#F3F0FD; --pubr:#C9BEF0;
+  --gy:#5C5A54; --gyb:#F3F2EE; --gybr:#D6D4CC;
+  --tl:#0F6E56; --tlb:#E1F5EE; --tlbr:#9FE1CB;
+  --fn:'DM Sans',sans-serif; --mo:'DM Mono',monospace;
+  --rr:6px; --r2:10px; --r3:14px;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 16px rgba(0,0,0,.10),0 2px 4px rgba(0,0,0,.05);
+  --sh3:0 8px 24px rgba(0,0,0,.15),0 2px 6px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fn);background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.side{background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{overflow:hidden;min-width:0}
+/* SIDEBAR */
+.logo{padding:18px 18px 14px;border-bottom:1px solid var(--bd)}
+.lmark{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.lic{width:28px;height:28px;background:var(--tx);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.ltx{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.lsb{font-size:10px;color:var(--tx3);font-family:var(--mo);padding-left:36px}
+.nav{padding:10px 8px;flex:1}
+.ns{font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;padding:10px 10px 4px}
+.ni{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--rr);cursor:pointer;font-size:13px;color:var(--tx2);transition:all .12s;margin-bottom:1px}
+.ni:hover{background:var(--sf2);color:var(--tx)}
+.ni.on{background:var(--tx);color:#fff}
+.ni.on .nb{background:rgba(255,255,255,.2);color:#fff}
+.nicon{font-size:13px;width:16px;text-align:center;flex-shrink:0;opacity:.7}
+.ni.on .nicon{opacity:1}
+.nb{margin-left:auto;font-size:10px;font-weight:600;background:var(--rb);color:var(--r);padding:1px 6px;border-radius:20px;font-family:var(--mo)}
+.nb.a{background:var(--ab);color:var(--a)}
+.sfoot{padding:12px 14px;border-top:1px solid var(--bd)}
+.sts{font-size:10px;color:var(--tx3);font-family:var(--mo);margin-bottom:6px}
+.srow{display:flex;gap:6px}
+.sbtn{flex:1;padding:6px;border-radius:var(--rr);border:1px solid var(--bd);background:transparent;font-size:11px;color:var(--tx2);cursor:pointer;font-family:var(--fn)}
+.sbtn:hover{background:var(--sf2)}
+/* PAGE */
+.ph{padding:18px 26px 14px;border-bottom:1px solid var(--bd);background:var(--sf);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:10}
+.ptl{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.psb{font-size:12px;color:var(--tx3);margin-top:1px}
+.ha{display:flex;gap:7px;align-items:center;flex-shrink:0}
+.pc{padding:18px 26px}
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:var(--rr);border:1px solid var(--bd);background:var(--sf);font-size:13px;color:var(--tx);cursor:pointer;font-family:var(--fn);transition:all .12s;white-space:nowrap;font-weight:500}
+.btn:hover{background:var(--sf2)}
+.btn-p{background:var(--tx);color:#fff;border-color:var(--tx)}
+.btn-p:hover{background:#2d2d2b}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-d{background:var(--rb);color:var(--r);border-color:var(--rbr)}
+/* URGÊNCIA — banda lateral colorida nas linhas */
+.urg-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--mo);white-space:nowrap}
+.ut-vc{background:#F5F4F0;color:#7A7870}       /* vencida */
+.ut-hj{background:var(--rb);color:var(--r)}    /* hoje */
+.ut-7{background:#FDE8E5;color:#A82010}         /* 1-7d */
+.ut-15{background:var(--ab);color:var(--a)}    /* 8-15d */
+.ut-30{background:#FEF9EC;color:#8A5000}        /* 16-30d */
+.ut-60{background:#FFFBF0;color:#7A6000}        /* 31-60d */
+.ut-ok{background:var(--gb);color:var(--g)}    /* >60d */
+/* METRICS */
+.mg{display:grid;gap:10px;margin-bottom:18px}
+.m5{grid-template-columns:repeat(5,1fr)}
+.m4{grid-template-columns:repeat(4,1fr)}
+.mc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);padding:13px 15px;position:relative;overflow:hidden}
+.mc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.mc-r::before{background:var(--r)}.mc-a::before{background:var(--a)}
+.mc-g::before{background:var(--g)}.mc-b::before{background:var(--bl)}
+.mc-gr::before{background:var(--bd2)}.mc-pu::before{background:var(--pu)}
+.ml{font-size:10px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.mv{font-size:21px;font-weight:600;letter-spacing:-.5px;font-family:var(--mo);line-height:1}
+.ms{font-size:11px;color:var(--tx3);margin-top:3px}
+.mv-r{color:var(--r)}.mv-a{color:var(--a)}.mv-g{color:var(--g)}.mv-b{color:var(--bl)}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.b-at{background:var(--gb);color:var(--g);border-color:var(--gbr)}
+.b-ve{background:var(--ab);color:var(--a);border-color:var(--abr)}
+.b-ur{background:var(--rb);color:var(--r);border-color:var(--rbr)}
+.b-vc{background:#F2F1EE;color:#7A7870;border-color:#D6D4CC}
+.b-rv{background:var(--blb);color:var(--bl);border-color:var(--blbr)}
+.b-pd{background:var(--rb);color:var(--r);border-color:var(--rbr)}
+.b-ca{background:var(--gyb);color:var(--gy);border-color:var(--gybr)}
+.b-in{background:var(--pub);color:var(--pu);border-color:var(--pubr)}
+.b-vi{background:var(--tlb);color:var(--tl);border-color:var(--tlbr)}
+.b-ni{background:var(--gyb);color:var(--gy);border-color:var(--gybr)}
+.b-id{background:var(--pub);color:var(--pu);border-color:var(--pubr)}
+.b-cf{background:var(--ab);color:var(--a);border-color:var(--abr)}
+.b-pe{background:var(--blb);color:var(--bl);border-color:var(--blbr)}
+.b-ng{background:#FEF0FB;color:#8B2B7A;border-color:#EDB8E5}
+.b-ag{background:var(--ab);color:var(--a);border-color:var(--abr)}
+.b-rr{background:var(--gb);color:var(--g);border-color:var(--gbr)}
+.b-rp{background:var(--rb);color:var(--r);border-color:var(--rbr)}
+.b-auto{background:var(--tlb);color:var(--tl);border-color:var(--tlbr);font-size:10px}
+/* TIPO */
+.tb{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;font-weight:500}
+.t-rc{background:#EEF4FD;color:#1A4E8C}.t-em{background:#EFF8F2;color:#1F6B3A}
+.t-au{background:#FEF6EC;color:#B7600A}.t-re{background:#F3F0FD;color:#5B3FA6}
+.t-vi{background:var(--tlb);color:var(--tl)}.t-ou{background:var(--gyb);color:var(--gy)}
+/* TABLE */
+.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:var(--r2);background:var(--sf)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);border-bottom:1px solid var(--bd);background:var(--sf2);white-space:nowrap;cursor:pointer;user-select:none;text-transform:uppercase;letter-spacing:.5px}
+th:hover{color:var(--tx)}
+td{padding:9px 11px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+/* Row highlights */
+tr.ru td{background:#FFFAF9}
+tr.ru:hover td{background:#FDF3F2}
+tr.rv td{background:#F9F9F8}
+tr.ri td{background:#FDF8FF}
+tr.rvi td{background:#F0FBF7}
+tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
+.tcnt{font-size:10px;color:var(--tx3);padding:7px 0 0;font-family:var(--mo)}
+/* ACTION BUTTONS */
+.ab{padding:3px 8px;font-size:11px;border-radius:var(--rr);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--fn);transition:all .1s;white-space:nowrap}
+.ab:hover{background:var(--sf2)}
+.ab-w{border-color:#B2DDB0;color:var(--g);background:var(--gb)}
+.ab-w:hover{background:#D5EFD4}
+/* FILTERS */
+.fb{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.fi{padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rr);font-size:13px;background:var(--sf);color:var(--tx);font-family:var(--fn);outline:none}
+.fi-w{flex:1;min-width:200px}
+.chips{display:flex;gap:1px;margin-bottom:12px;flex-wrap:wrap}
+.chip{padding:5px 11px;font-size:12px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);cursor:pointer;font-family:var(--fn);white-space:nowrap}
+.chip:first-child{border-radius:var(--rr) 0 0 var(--rr)}
+.chip:last-child{border-radius:0 var(--rr) var(--rr) 0}
+.chip:not(:first-child):not(:last-child){border-radius:0}
+.chip.on{background:var(--tx);color:#fff;border-color:var(--tx);z-index:1}
+/* BANNER */
+.bnr{padding:10px 14px;border-radius:var(--rr);border-left:3px solid;margin-bottom:10px;font-size:12px;display:flex;align-items:center;gap:8px;font-weight:500}
+.bnr-r{background:var(--rb);border-color:var(--r);color:var(--r)}
+.bnr-a{background:var(--ab);border-color:var(--a);color:var(--a)}
+/* AÇÃO DO DIA */
+.ad{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);margin-bottom:18px;overflow:hidden}
+.ad-h{padding:12px 16px;background:var(--tx);color:#fff;display:flex;align-items:center;justify-content:space-between}
+.ad-t{font-size:13px;font-weight:600}
+.ad-s{font-size:11px;opacity:.6;font-family:var(--mo)}
+.ad-group-lbl{padding:7px 16px 5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;background:var(--sf2);border-bottom:1px solid var(--bd);color:var(--tx3)}
+.ad-item{display:grid;grid-template-columns:28px 1fr 1fr 80px 70px 80px;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+.ad-item:last-child{border-bottom:none}
+.ad-item:hover{background:var(--bg)}
+.ad-item.grp-vc{background:#FFFCFC}
+.ad-item.grp-hj{background:#FFFAF9}
+.ad-n{font-size:11px;font-weight:700;color:var(--tx3);font-family:var(--mo);text-align:center}
+.ad-cli{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-meta{font-size:11px;color:var(--tx3);margin-top:1px}
+.ad-seg{font-size:12px;color:var(--tx2)}
+.ad-dias{font-size:13px;font-weight:700;text-align:right;font-family:var(--mo)}
+.ad-pre{font-size:12px;color:var(--tx2);font-family:var(--mo);text-align:right}
+/* PAINEL VENDAS */
+.pv{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);margin-bottom:18px;overflow:hidden}
+.pv-h{padding:12px 16px 10px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.pv-t{font-size:13px;font-weight:600}
+.pv-g{display:grid;grid-template-columns:repeat(4,1fr)}
+.pv-i{padding:13px 15px;border-right:1px solid var(--bd)}
+.pv-i:last-child{border-right:none}
+.pv-l{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.pv-v{font-size:18px;font-weight:600;font-family:var(--mo);letter-spacing:-.5px}
+.pv-s{font-size:11px;color:var(--tx3);margin-top:2px}
+/* CHARTS */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.cc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);padding:14px 16px}
+.ct{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bl2{font-size:12px;color:var(--tx2);width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt2{flex:1;height:5px;background:var(--sf2);border-radius:3px;overflow:hidden}
+.bf2{height:100%;border-radius:3px}
+.bv2{font-size:11px;color:var(--tx3);font-family:var(--mo);width:72px;text-align:right;flex-shrink:0}
+/* PIPELINE */
+.pipe-wrap{overflow-x:auto;padding-bottom:8px}
+.pipe-board{display:flex;gap:10px;min-width:max-content;padding-bottom:4px}
+.pipe-col{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);padding:10px;width:185px;flex-shrink:0;min-height:100px;transition:background .15s,border-color .15s}
+.pipe-col.dov{background:#F0F7FF;border-color:var(--blbr);border-style:dashed}
+.pipe-col.dov-w{background:#F0FBF4;border-color:var(--gbr);border-style:dashed}
+.pipe-col.dov-l{background:#FEF2F1;border-color:var(--rbr);border-style:dashed}
+.pipe-col-won{border-color:var(--gbr);background:var(--gb)}
+.pipe-col-lost{border-color:var(--rbr);background:var(--rb)}
+.phd{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.pnm{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.4px}
+.pipe-col-won .pnm{color:var(--g)}.pipe-col-lost .pnm{color:var(--r)}
+.pcnt{font-size:10px;font-family:var(--mo);color:var(--tx3);background:var(--sf2);padding:1px 5px;border-radius:10px}
+.ptot{font-size:10px;color:var(--tx3);font-family:var(--mo);margin-bottom:8px}
+.pcard{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rr);padding:9px 10px;margin-bottom:5px;cursor:grab;transition:all .15s;user-select:none}
+.pcard:hover{background:var(--sf);box-shadow:var(--sh)}
+.pcard.dragging{opacity:.35;transform:scale(.97);cursor:grabbing;box-shadow:var(--sh3)}
+.pcard.urgent{border-left:2px solid var(--r)}
+.pcard.warn{border-left:2px solid var(--a)}
+.pc-n{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-tp{font-size:10px;color:var(--tx3);margin-bottom:4px}
+.pc-row{display:flex;align-items:center;justify-content:space-between}
+.pc-val{font-size:11px;font-weight:600;color:var(--tx2);font-family:var(--mo)}
+.pc-dias{font-size:11px;font-weight:700}
+/* FU indicator */
+.fu-d{color:var(--r);font-weight:600}
+.fu-s{color:var(--a);font-weight:600}
+.fu-o{color:var(--tx3)}
+/* FLAGS */
+.flag-inc{display:inline-block;width:7px;height:7px;background:var(--pu);border-radius:50%;margin-left:4px;vertical-align:middle}
+.flag-auto{background:var(--tlb);color:var(--tl);border:1px solid var(--tlbr);font-size:9px;font-weight:600;padding:0 4px;border-radius:3px;margin-left:4px;vertical-align:middle}
+.b-blk{background:#F3F2EE;color:#5C5A54;border:1px solid #D6D4CC;font-size:9px;padding:1px 5px;border-radius:3px;vertical-align:middle;margin-left:4px}
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.mo.open{display:flex}
+.mdl{background:var(--sf);border-radius:var(--r3);border:1px solid var(--bd);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:var(--sh2)}
+.mdl-lg{max-width:640px}
+.mh{padding:16px 20px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--sf);z-index:1}
+.mt{font-size:15px;font-weight:600}
+.msb{font-size:11px;color:var(--tx3);margin-top:1px;font-family:var(--mo)}
+.mx{padding:4px 8px;border-radius:var(--rr);border:1px solid var(--bd);background:transparent;cursor:pointer;font-size:16px;color:var(--tx3);font-family:var(--fn)}
+.mx:hover{background:var(--sf2)}
+.mb{padding:16px 20px}
+.mf{padding:12px 20px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;bottom:0;background:var(--sf)}
+.mfl{display:flex;gap:6px}.mfr{display:flex;gap:6px}
+/* FORM */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fr.f{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px}
+.fin{padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rr);font-size:13px;font-family:var(--fn);color:var(--tx);background:var(--sf);outline:none;width:100%}
+.fin.dn{border-color:var(--rbr);background:var(--rb)}
+/* SECTION DIVIDER */
+.sd{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--bd)}
+/* HIST */
+.hi{padding:7px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.hi:last-child{border-bottom:none}
+.ht{font-size:10px;color:var(--tx3);font-family:var(--mo)}
+.ha2{font-weight:500;color:var(--tx);margin-top:1px}
+.ho{color:var(--tx2);font-style:italic;margin-top:1px}
+/* STATUS CONFIRM */
+.sc2{background:var(--ab);border:1px solid var(--abr);border-radius:var(--rr);padding:9px 12px;margin-bottom:10px;font-size:12px;color:var(--a)}
+/* TABS */
+.tabs{display:flex;margin-bottom:14px;border-bottom:1px solid var(--bd)}
+.tb2{padding:8px 14px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--tx3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--fn)}
+.tb2:hover{color:var(--tx)}
+.tb2.on{color:var(--tx);border-bottom-color:var(--tx)}
+/* MOTIVO PERDA */
+.mp-g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.mp-o{padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rr);font-size:12px;cursor:pointer;text-align:center;background:var(--sf);color:var(--tx2)}
+.mp-o:hover{background:var(--sf2)}
+.mp-o.on{background:var(--rb);color:var(--r);border-color:var(--rbr)}
+/* FU suggest */
+.fu-sg{background:var(--blb);border:1px solid var(--blbr);border-radius:var(--rr);padding:8px 10px;font-size:12px;color:var(--bl);cursor:pointer;margin-top:4px}
+/* EMPTY */
+.empty{padding:36px;text-align:center;color:var(--tx3);font-size:13px}
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}.side{display:none}
+  .m5,.m4{grid-template-columns:repeat(2,1fr)}
+  .cg{grid-template-columns:1fr}.pv-g{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="logo">
+    <div class="lmark"><div class="lic">H</div><div class="ltx">Haus Seguros</div></div>
+    <div class="lsb">CRM v4 — Operacional</div>
+  </div>
+  <nav class="nav">
+    <div class="ns">Visão Geral</div>
+    <div class="ni on" onclick="goPage('dash')" id="nav-dash"><span class="nicon">▦</span>Dashboard<span class="nb" id="nb-inc" style="display:none">!</span></div>
+    <div class="ns">Carteira</div>
+    <div class="ni" onclick="goPage('apolices')" id="nav-apolices"><span class="nicon">◫</span>Apólices<span class="nb" id="nb-ap" style="display:none">0</span></div>
+    <div class="ni" onclick="goPage('urgentes')" id="nav-urgentes"><span class="nicon">◉</span>Urgentes<span class="nb" id="nb-urg" style="display:none">0</span></div>
+    <div class="ns">Comercial</div>
+    <div class="ni" onclick="goPage('pipeline')" id="nav-pipeline"><span class="nicon">⟶</span>Pipeline<span class="nb a" id="nb-pipe" style="display:none">0</span></div>
+    <div class="ns">Análise</div>
+    <div class="ni" onclick="goPage('analytics')" id="nav-analytics"><span class="nicon">◈</span>Analytics</div>
+  </nav>
+  <div class="sfoot">
+    <div class="sts" id="sync-ts">Inicializando...</div>
+    <div class="srow">
+      <button class="sbtn" onclick="runDaily(false)">↻ Atualizar</button>
+      <button class="sbtn" onclick="openM('m-export')">↓ Export</button>
+    </div>
+    <button id="install-btn" class="sbtn" style="display:none;margin-top:6px;width:100%;background:var(--blb);color:var(--bl);border-color:var(--blbr)" title="Instalar como app">⬇ Instalar como app</button>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="page-dash" class="page">
+  <div class="ph">
+    <div><div class="ptl">Dashboard</div><div class="psb" id="dash-dt"></div></div>
+    <div class="ha"><button class="btn btn-p" onclick="openM('m-nova-ap')">+ Nova apólice</button></div>
+  </div>
+  <div class="pc">
+    <div id="banners"></div>
+    <div class="mg m5" id="dash-m"></div>
+    <!-- PAINEL DE VENDAS -->
+    <div class="pv">
+      <div class="pv-h"><span class="pv-t">Painel de Vendas</span><span style="font-size:11px;color:var(--tx3)">Apenas comerciais — exclui Vida automáticas</span></div>
+      <div class="pv-g" id="pv-top"></div>
+      <div class="pv-g" id="pv-bot" style="border-top:1px solid var(--bd)"></div>
+    </div>
+    <!-- AÇÃO DO DIA -->
+    <div class="ad">
+      <div class="ad-h">
+        <div><div class="ad-t">Ação do Dia</div><div class="ad-s">Ordenado por vencimento · Exclui Vida automáticas</div></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2)" onclick="goPage('apolices')">Ver todas →</button>
+      </div>
+      <div id="acao-list"></div>
+    </div>
+    <div class="cg">
+      <div class="cc"><div class="ct">Vencimentos próximos 90 dias (comerciais)</div><div id="ch-venc"></div></div>
+      <div class="cc"><div class="ct">Prêmio por tipo</div><div id="ch-tipo"></div></div>
+    </div>
+    <div class="cc" style="margin-bottom:14px">
+      <div class="ct">Apólices vencidas sem definição</div>
+      <div id="lista-inc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APÓLICES -->
+<div id="page-apolices" class="page" style="display:none">
+  <div class="ph">
+    <div><div class="ptl">Apólices</div><div class="psb" id="ap-sub">Carteira completa</div></div>
+    <div class="ha"><button class="btn btn-p" onclick="openM('m-nova-ap')">+ Nova apólice</button></div>
+  </div>
+  <div class="pc">
+    <div class="fb">
+      <input class="fi fi-w" type="text" placeholder="Buscar cliente, seguradora, nº..." id="s-ap" oninput="renderAp()"/>
+      <select class="fi" id="f-sa" onchange="renderAp()">
+        <option value="">Todos os status</option>
+        <option>Ativa</option><option>Vencendo</option><option>Urgente</option>
+        <option>Vencida</option><option>Renovada</option><option>Perdida</option><option>Cancelada</option>
+      </select>
+      <select class="fi" id="f-tp" onchange="renderAp()">
+        <option value="">Todos os tipos</option>
+        <option>RC Profissional</option><option>Empresarial</option><option>Automóvel</option><option>Residencial</option><option>Vida</option>
+      </select>
+      <select class="fi" id="f-sg" onchange="renderAp()"><option value="">Todas seguradoras</option></select>
+    </div>
+    <div class="chips" id="chips-ap">
+      <button class="chip on" onclick="setChip('todas',this)">Todas</button>
+      <button class="chip" onclick="setChip('urgente',this)">Urgentes</button>
+      <button class="chip" onclick="setChip('vencida',this)">Vencidas</button>
+      <button class="chip" onclick="setChip('renovada',this)">Renovadas</button>
+      <button class="chip" onclick="setChip('perdida',this)">Perdidas</button>
+      <button class="chip" onclick="setChip('inc',this)">Inconsistentes</button>
+      <button class="chip" onclick="setChip('fu',this)">Follow-up hoje</button>
+      <button class="chip" onclick="setChip('vida',this)">Vida (auto)</button>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th onclick="sortAp('urg')">Urgência</th>
+          <th onclick="sortAp('cliente')">Cliente</th>
+          <th onclick="sortAp('tipo')">Tipo</th>
+          <th onclick="sortAp('seguradora')">Seguradora</th>
+          <th onclick="sortAp('premio')">Prêmio</th>
+          <th onclick="sortAp('fim')">Vencimento</th>
+          <th onclick="sortAp('dias')">Dias</th>
+          <th>Status apólice</th>
+          <th>Renovação</th>
+          <th onclick="sortAp('dpa')">Próx. ação</th>
+          <th>Ações</th>
+        </tr></thead>
+        <tbody id="tb-ap"></tbody>
+      </table>
+      <div id="em-ap" class="empty" style="display:none">Nenhuma apólice encontrada.</div>
+    </div>
+    <div class="tcnt" id="cnt-ap"></div>
+  </div>
+</div>
+
+<!-- URGENTES -->
+<div id="page-urgentes" class="page" style="display:none">
+  <div class="ph"><div><div class="ptl">Urgentes</div><div class="psb">Ação comercial imediata — ordenado por vencimento</div></div></div>
+  <div class="pc">
+    <div class="tabs">
+      <button class="tb2 on" onclick="setTabU('vc',this)">Vencidas s/ def.</button>
+      <button class="tb2" onclick="setTabU('hj',this)">Hoje</button>
+      <button class="tb2" onclick="setTabU('30',this)">Até 30 dias</button>
+      <button class="tb2" onclick="setTabU('60',this)">Até 60 dias</button>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th>Urgência</th><th>Cliente</th><th>Tipo</th><th>Seguradora</th>
+          <th>Vencimento</th><th>Dias</th><th>Prêmio</th><th>Renovação</th><th>Follow-up</th><th>Ações</th>
+        </tr></thead>
+        <tbody id="tb-urg"></tbody>
+      </table>
+      <div id="em-urg" class="empty" style="display:none">Nenhuma apólice nesta categoria.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PIPELINE -->
+<div id="page-pipeline" class="page" style="display:none">
+  <div class="ph">
+    <div><div class="ptl">Pipeline de Renovações</div><div class="psb">Arraste os cards para atualizar — Vida excluída</div></div>
+    <div class="ha"><button class="btn btn-p" onclick="openM('m-nova-op')">+ Nova oportunidade</button></div>
+  </div>
+  <div class="pc">
+    <div class="mg m4" id="pipe-m"></div>
+    <div class="pipe-wrap"><div class="pipe-board" id="pipe-board"></div></div>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div id="page-analytics" class="page" style="display:none">
+  <div class="ph"><div class="ptl">Analytics</div></div>
+  <div class="pc">
+    <div class="mg m4" id="an-m"></div>
+    <div class="cg">
+      <div class="cc"><div class="ct">Prêmio por seguradora</div><div id="ch-seg"></div></div>
+      <div class="cc"><div class="ct">Prêmio por tipo</div><div id="ch-tipo2"></div></div>
+      <div class="cc"><div class="ct">Vencimentos por mês</div><div id="ch-mes"></div></div>
+      <div class="cc"><div class="ct">Status da carteira</div><div id="ch-st"></div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- MODAL NOVA APÓLICE -->
+<div class="mo" id="m-nova-ap">
+  <div class="mdl">
+    <div class="mh"><div><div class="mt">Nova apólice</div></div><button class="mx" onclick="closeM('m-nova-ap')">✕</button></div>
+    <div class="mb">
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="na-c" placeholder="Nome completo"/></div><div class="fg"><label class="fl">Tipo</label><select class="fin" id="na-t"><option>RC Profissional</option><option>Empresarial</option><option>Automóvel</option><option>Residencial</option><option>Vida</option><option>Outro</option></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="na-s" placeholder="Nome"/></div><div class="fg"><label class="fl">Nº Apólice</label><input class="fin" id="na-n" placeholder="Número"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Prêmio (R$)</label><input class="fin" id="na-p" type="number" placeholder="0"/></div><div class="fg"><label class="fl">Vencimento</label><input class="fin" id="na-f" type="date"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Responsável</label><input class="fin" id="na-r" placeholder="Assessor"/></div><div class="fg"><label class="fl">Status renovação</label><select class="fin" id="na-sr"><option value="Não iniciada">Não iniciada</option><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option></select></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="na-o" placeholder="Coberturas, notas..."/></div></div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-nova-ap')">Cancelar</button><button class="btn btn-p" onclick="salvarNovaAp()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR STATUS -->
+<div class="mo" id="m-status">
+  <div class="mdl mdl-lg">
+    <div class="mh">
+      <div><div class="mt" id="ms-tit">Editar apólice</div><div class="msb" id="ms-sub"></div></div>
+      <button class="mx" onclick="closeM('m-status')">✕</button>
+    </div>
+    <div class="mb">
+      <div id="ms-ban" class="sc2" style="display:none"></div>
+      <div class="sd">Status</div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Status da apólice</label><select class="fin" id="e-sa"><option>Ativa</option><option>Vencendo</option><option>Urgente</option><option>Vencida</option><option>Renovada</option><option>Perdida</option><option>Cancelada</option></select></div>
+        <div class="fg"><label class="fl">Status da renovação</label><select class="fin" id="e-sr" onchange="onSrCh()"><option value="Não iniciada">Não iniciada</option><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option><option>Aguardando retorno</option><option>Renovada</option><option>Perdida</option><option>Cancelada</option></select></div>
+      </div>
+      <div id="blk-ren" style="display:none">
+        <div class="fr"><div class="fg"><label class="fl">Apólice substituta</label><input class="fin" id="e-subs" placeholder="Nº"/></div><div class="fg"><label class="fl">Data renovação</label><input class="fin" id="e-dtr" type="date"/></div></div>
+      </div>
+      <div id="blk-per" style="display:none">
+        <div class="sd">Motivo da perda</div>
+        <div class="mp-g" id="mp-g"></div>
+        <div class="fr f" style="margin-top:8px"><div class="fg"><label class="fl">Observação</label><input class="fin" id="e-obsp" placeholder="Detalhes..."/></div></div>
+      </div>
+      <div class="sd">Follow-up comercial</div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="e-pa" placeholder="Ex: Ligar, enviar proposta..."/><div id="fu-sg" class="fu-sg" style="display:none"></div></div>
+        <div class="fg"><label class="fl">Data</label><input class="fin" id="e-dpa" type="date"/></div>
+      </div>
+      <div class="fr f"><div class="fg"><label class="fl">Última interação</label><input class="fin" id="e-ui" placeholder="Último contato..."/></div></div>
+      <div class="sd">Motivo da alteração <span style="color:var(--r)">*</span></div>
+      <div class="fr f"><div class="fg"><input class="fin" id="e-mot" placeholder="Obrigatório..."/></div></div>
+      <div style="margin-top:14px">
+        <div class="sd">Histórico</div>
+        <div id="hist-list"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <div class="mfl">
+        <button class="btn btn-d btn-sm" id="btn-reset" onclick="resetAuto()" style="display:none">↻ Reset automação</button>
+        <span id="blk-info" style="font-size:11px;color:var(--tx3);align-self:center"></span>
+      </div>
+      <div class="mfr"><button class="btn" onclick="closeM('m-status')">Cancelar</button><button class="btn btn-p" onclick="salvarStatus()">Salvar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOVA OPORTUNIDADE -->
+<div class="mo" id="m-nova-op">
+  <div class="mdl">
+    <div class="mh"><div><div class="mt">Nova oportunidade</div></div><button class="mx" onclick="closeM('m-nova-op')">✕</button></div>
+    <div class="mb">
+      <div class="fr f"><div class="fg"><label class="fl">Nome</label><input class="fin" id="op-n" placeholder="Ex: Renovação RC — João Silva"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="op-c" placeholder="Nome"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="op-v" type="number" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="op-e"><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option><option>Aguardando retorno</option></select></div><div class="fg"><label class="fl">Data limite</label><input class="fin" id="op-d" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">ID da apólice vinculada</label><input class="fin" id="op-id" placeholder="ID numérico (opcional)"/></div></div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-nova-op')">Cancelar</button><button class="btn btn-p" onclick="salvarOp()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL EXPORT -->
+<div class="mo" id="m-export">
+  <div class="mdl" style="max-width:360px">
+    <div class="mh"><div><div class="mt">Exportar / Importar</div></div><button class="mx" onclick="closeM('m-export')">✕</button></div>
+    <div class="mb">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn" onclick="exportCSV()" style="text-align:left;padding:12px 14px"><div style="font-weight:600">↓ CSV — Apólices</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Tabela completa para Excel</div></button>
+        <button class="btn" onclick="exportJSON()" style="text-align:left;padding:12px 14px"><div style="font-weight:600">↓ JSON — Backup completo</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Apólices + pipeline + histórico</div></button>
+        <button class="btn" onclick="doImportClick()" style="text-align:left;padding:12px 14px"><div style="font-weight:600">↑ Importar JSON</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Restaurar backup</div></button>
+        <input type="file" id="imp-file" accept=".json" style="display:none" onchange="doImport(event)"/>
+      </div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-export')">Fechar</button></div></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// SUPABASE — CONFIGURAÇÃO
+// Preencha com suas credenciais do projeto Supabase
+// ================================================================
+const SB_URL = 'https://nbnlkfyjfqvuhlbesyck.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ibmxrZnlqZnF2dWhsYmVzeWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NDk1MjMsImV4cCI6MjA5MjUyNTUyM30.-99cnvPfdHXsavE3WhQYozN4C1TEVMK2YOhGEbUJZ3g';
+
+let sb = null;
+let SB_OK = false;
+
+function initSupabase() {
+  try {
+    if (!SB_URL || !SB_KEY || SB_URL.length < 10 || SB_KEY.length < 10) {
+      console.warn('[Haus CRM] Supabase não configurado — usando localStorage.');
+      SB_OK = false;
+      return;
+    }
+    sb = window.supabase.createClient(SB_URL, SB_KEY);
+    SB_OK = true;
+    console.log('[Haus CRM] Supabase conectado.');
+  } catch(e) {
+    console.warn('[Haus CRM] Falha ao iniciar Supabase:', e);
+    SB_OK = false;
+  }
+}
+
+// ── CAMADA DE DADOS (Supabase com fallback localStorage) ────────────────────
+
+async function dbSave() {
+  // Sempre salva localStorage como cache/offline
+  try {
+    localStorage.setItem('h4_ap', JSON.stringify(AP));
+    localStorage.setItem('h4_pi', JSON.stringify(PIPE));
+    localStorage.setItem('h4_ni', String(NID));
+  } catch(e) {}
+
+  if (!SB_OK || !sb) return;
+  try {
+    // Upsert carteira (1 linha = estado completo)
+    await sb.from('haus_crm_state').upsert({
+      id: 'main',
+      apolices: AP,
+      pipeline: PIPE,
+      next_id: NID,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'id' });
+  } catch(e) {
+    console.warn('[Haus CRM] Erro ao salvar no Supabase:', e.message);
+    setStatus('Erro ao salvar ⚠');
+    return;
+  }
+  const now = new Date();
+  setStatus('Salvo: ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
+  localStorage.setItem('h4_remote_ts', String(now.getTime()));
+}
+
+async function dbLoad() {
+  if (!SB_OK || !sb) {
+    // fallback: localStorage
+    try {
+      const a = localStorage.getItem('h4_ap');
+      const p = localStorage.getItem('h4_pi');
+      const n = localStorage.getItem('h4_ni');
+      if (a) AP = JSON.parse(a);
+      if (p) PIPE = JSON.parse(p);
+      if (n) NID = parseInt(n);
+    } catch(e) {}
+    if (!AP.length) initBase(); else migrate();
+    return;
+  }
+  try {
+    setStatus('Carregando dados...');
+    const { data, error } = await sb.from('haus_crm_state').select('*').eq('id', 'main').single();
+    if (error || !data) {
+      console.warn('[Haus CRM] Sem dados no Supabase, iniciando base.');
+      // Tenta localStorage como fallback
+      try {
+        const a = localStorage.getItem('h4_ap');
+        const p = localStorage.getItem('h4_pi');
+        const n = localStorage.getItem('h4_ni');
+        if (a) AP = JSON.parse(a);
+        if (p) PIPE = JSON.parse(p);
+        if (n) NID = parseInt(n);
+      } catch(e2) {}
+      if (!AP.length) initBase(); else migrate();
+    } else {
+      AP = data.apolices || [];
+      PIPE = data.pipeline || [];
+      NID = data.next_id || 300;
+      migrate();
+      // Atualiza cache local
+      try {
+        localStorage.setItem('h4_ap', JSON.stringify(AP));
+        localStorage.setItem('h4_pi', JSON.stringify(PIPE));
+        localStorage.setItem('h4_ni', String(NID));
+      } catch(e) {}
+    }
+  } catch(e) {
+    console.warn('[Haus CRM] Erro ao carregar Supabase:', e.message);
+    // Fallback localStorage
+    try {
+      const a = localStorage.getItem('h4_ap');
+      const p = localStorage.getItem('h4_pi');
+      const n = localStorage.getItem('h4_ni');
+      if (a) AP = JSON.parse(a);
+      if (p) PIPE = JSON.parse(p);
+      if (n) NID = parseInt(n);
+    } catch(e2) {}
+    if (!AP.length) initBase(); else migrate();
+  }
+}
+
+function setStatus(msg) {
+  const el = document.getElementById('sync-ts');
+  if (el) el.textContent = msg;
+}
+
+// ================================================================
+// DADOS BASE (69 apólices)
+// ================================================================
+const BASE=[
+  {id:1,cliente:"Maria Clara De Lima Aguiar Leite",seguradora:"ARGO",tipo:"RC Profissional",numero:"250035",premio:975.54,fim:"2026-03-26",obs:"Renovado",sr0:"Renovada"},
+  {id:2,cliente:"Klaerton De Moura Guedes",seguradora:"ZURICH MINAS",tipo:"Automóvel",numero:"0091909",premio:1734.17,fim:"2026-03-31",obs:"Renovado",sr0:"Renovada"},
+  {id:3,cliente:"Murilo Angelini Vidigal De Oliveira",seguradora:"MONGERAL",tipo:"Vida",numero:"10898289524181",premio:6.38,fim:"2026-04-01",obs:"",sr0:"Renovada"},
+  {id:4,cliente:"Cristiano Nader De Andrade Melo",seguradora:"AZUL",tipo:"Automóvel",numero:"11.25.0531.12415547",premio:1051.53,fim:"2026-04-04",obs:"",sr0:"Renovada"},
+  {id:5,cliente:"Antonio Paulo Soares Ribeiro Filho",seguradora:"MONGERAL",tipo:"Vida",numero:"10904745924181",premio:12.52,fim:"2026-04-09",obs:"",sr0:"Renovada"},
+  {id:6,cliente:"Gd Comercio De Borrachas E Derivados Ltda",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"4062550",premio:10275.26,fim:"2026-04-10",obs:"Renovado",sr0:"Renovada"},
+  {id:7,cliente:"Maria Ester De Carvalho",seguradora:"BRADESCO",tipo:"Automóvel",numero:"690268",premio:1927.22,fim:"2026-04-12",obs:"Renovado",sr0:"Renovada"},
+  {id:8,cliente:"Vertice Contadores Associados S/S Ltda.",seguradora:"EZZE SEGUROS",tipo:"RC Profissional",numero:"1037803008707",premio:0,fim:"2026-04-14",obs:"Renovado",sr0:"Renovada"},
+  {id:9,cliente:"Eliane De Holanda Osório",seguradora:"MONGERAL",tipo:"Vida",numero:"10907398524051",premio:22.81,fim:"2026-04-16",obs:"",sr0:"Renovada"},
+  {id:10,cliente:"Hometeck Materiais Para Construcao Ltda",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"4062886",premio:13898.78,fim:"2026-04-17",obs:"Não vai renovar",sr0:"Perdida"},
+  {id:11,cliente:"Wilson Demetrius Kontoyanis",seguradora:"AZUL",tipo:"Automóvel",numero:"11.25.0531.12546803",premio:3604.11,fim:"2026-04-24",obs:"Enviado - Wpp",sr0:"Contato feito"},
+  {id:12,cliente:"Eliane De Holanda Osório",seguradora:"MONGERAL",tipo:"Vida",numero:"10907398524181",premio:8.61,fim:"2026-04-28",obs:"",sr0:"Renovada"},
+  {id:13,cliente:"R Fonseca Advogados",seguradora:"AIG",tipo:"RC Profissional",numero:"087372025010378",premio:0,fim:"2026-04-28",obs:"Enviada - Email",sr0:"Proposta enviada"},
+  {id:14,cliente:"Erycson Medeiros Sociedade Individual De Advocacia",seguradora:"AKAD",tipo:"RC Profissional",numero:"250043",premio:2849.63,fim:"2026-04-30",obs:"Enviada - Wpp",sr0:"Proposta enviada"},
+  {id:15,cliente:"Denise Leinemann Wuerkert",seguradora:"AZUL",tipo:"Residencial",numero:"4192409",premio:2330.27,fim:"2026-05-08",obs:"",sr0:"Não iniciada"},
+  {id:16,cliente:"Dangles Resende Macedo Eid",seguradora:"CHUBB",tipo:"RC Profissional",numero:"1.780.067.812",premio:0,fim:"2026-05-11",obs:"",sr0:"Não iniciada"},
+  {id:17,cliente:"Helio Guedes De Campos Barros",seguradora:"AZUL",tipo:"Residencial",numero:"4193080",premio:610.67,fim:"2026-05-14",obs:"",sr0:"Não iniciada"},
+  {id:18,cliente:"Pedro Henrique Lima Soares",seguradora:"ARGO",tipo:"RC Profissional",numero:"250035",premio:3614.69,fim:"2026-05-18",obs:"",sr0:"Não iniciada"},
+  {id:19,cliente:"Tiago Noleto De Carvalho Capparelli",seguradora:"MONGERAL",tipo:"Vida",numero:"1094527182028",premio:8.61,fim:"2026-06-02",obs:"",sr0:"Renovada"},
+  {id:20,cliente:"Bruna Souto Bastos",seguradora:"BRADESCO",tipo:"Automóvel",numero:"699497",premio:1427.92,fim:"2026-06-06",obs:"",sr0:"Não iniciada"},
+  {id:21,cliente:"Sr Gold Joias Eireli",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"4063646",premio:1148.92,fim:"2026-06-06",obs:"",sr0:"Não iniciada"},
+  {id:22,cliente:"Casemiro Vieira Rodrigues Braganca",seguradora:"PORTO SEGURO",tipo:"Automóvel",numero:"05311112612580",premio:1672.18,fim:"2026-06-09",obs:"",sr0:"Não iniciada"},
+  {id:23,cliente:"Pedro Peris Caixeta",seguradora:"TOKIO MARINE",tipo:"Vida",numero:"19163",premio:32.76,fim:"2026-06-10",obs:"",sr0:"Renovada"},
+  {id:24,cliente:"Shirley De Paula Oliveira",seguradora:"TOKIO MARINE",tipo:"Vida",numero:"19189",premio:30.48,fim:"2026-06-10",obs:"",sr0:"Renovada"},
+  {id:25,cliente:"Noleto Sociedade Individual De Advocacia",seguradora:"AZUL",tipo:"Residencial",numero:"4195949",premio:1060.77,fim:"2026-06-20",obs:"",sr0:"Não iniciada"},
+  {id:26,cliente:"Feroz Comercio De Oculos E Acessorios Ltda",seguradora:"ALLIANZ",tipo:"Empresarial",numero:"0082975",premio:578.72,fim:"2026-06-21",obs:"",sr0:"Não iniciada"},
+  {id:27,cliente:"Lu Comercio De Oculos E Acessorios Ltda",seguradora:"ALLIANZ",tipo:"Empresarial",numero:"0082977",premio:484.05,fim:"2026-06-21",obs:"",sr0:"Não iniciada"},
+  {id:28,cliente:"R Fonseca Advogados",seguradora:"BRADESCO",tipo:"Empresarial",numero:"006969",premio:489.17,fim:"2026-06-24",obs:"",sr0:"Não iniciada"},
+  {id:29,cliente:"Gb Comercio De Oculos E Acessorios Eireli",seguradora:"ALLIANZ",tipo:"Empresarial",numero:"0083237",premio:429.83,fim:"2026-06-26",obs:"",sr0:"Não iniciada"},
+  {id:30,cliente:"Marly Ponce Branco",seguradora:"AZUL",tipo:"Automóvel",numero:"11.25.0531.12666493",premio:2651.77,fim:"2026-07-01",obs:"",sr0:"Não iniciada"},
+  {id:31,cliente:"Bonatti E Soares Odontologia Ltda",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"4064061",premio:0,fim:"2026-07-02",obs:"",sr0:"Não iniciada"},
+  {id:32,cliente:"Gef Comercio De Alimentos Ltda",seguradora:"TOKIO MARINE",tipo:"Empresarial",numero:"2690592",premio:837.53,fim:"2026-07-08",obs:"",sr0:"Não iniciada"},
+  {id:33,cliente:"Lazer Comercio De Oculos E Acessorios Ltda",seguradora:"ALLIANZ",tipo:"Empresarial",numero:"0085436",premio:520.25,fim:"2026-07-09",obs:"",sr0:"Não iniciada"},
+  {id:34,cliente:"Rafael Curado Matta",seguradora:"PORTO SEGURO",tipo:"Residencial",numero:"4196973",premio:745.90,fim:"2026-07-14",obs:"",sr0:"Não iniciada"},
+  {id:35,cliente:"Joao Pedro Vieira Jardim",seguradora:"AKAD",tipo:"RC Profissional",numero:"250035",premio:578.57,fim:"2026-07-17",obs:"",sr0:"Não iniciada"},
+  {id:36,cliente:"Gustavo Souza",seguradora:"MAPFRE",tipo:"RC Profissional",numero:"4535000004378",premio:1182.57,fim:"2026-07-19",obs:"",sr0:"Não iniciada"},
+  {id:37,cliente:"Fabricio Ribeiro Dos Santos Furtado",seguradora:"MITSUI",tipo:"Empresarial",numero:"4064800",premio:199.94,fim:"2026-08-08",obs:"",sr0:"Não iniciada"},
+  {id:38,cliente:"Gabriel Sarkis Mundim",seguradora:"PORTO SEGURO",tipo:"Residencial",numero:"4198859",premio:1277.99,fim:"2026-08-08",obs:"",sr0:"Não iniciada"},
+  {id:39,cliente:"Robson Vieira",seguradora:"AZUL",tipo:"Residencial",numero:"4200699",premio:2055.68,fim:"2026-08-19",obs:"",sr0:"Não iniciada"},
+  {id:40,cliente:"Felipe Fraga De Amorim",seguradora:"MITSUI",tipo:"Automóvel",numero:"11.25.0531.12824153",premio:1893.23,fim:"2026-08-29",obs:"",sr0:"Não iniciada"},
+  {id:41,cliente:"Gabriela Gomes Vieira",seguradora:"AKAD",tipo:"RC Profissional",numero:"250037",premio:608.15,fim:"2026-09-05",obs:"",sr0:"Não iniciada"},
+  {id:42,cliente:"Joberson Lino Lopes",seguradora:"AZUL",tipo:"Automóvel",numero:"11.25.0531.12842321",premio:2423.88,fim:"2026-09-12",obs:"",sr0:"Não iniciada"},
+  {id:43,cliente:"Vilson Martins",seguradora:"MITSUI",tipo:"Empresarial",numero:"4065514",premio:551.14,fim:"2026-09-15",obs:"",sr0:"Não iniciada"},
+  {id:44,cliente:"Belabeia Centro De Medicina E Estetica De Brasilia",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"4065451",premio:551.98,fim:"2026-09-19",obs:"",sr0:"Não iniciada"},
+  {id:45,cliente:"Belabeia Laser Cuidados Com A Beleza Ltda",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"4065452",premio:823.34,fim:"2026-09-23",obs:"",sr0:"Não iniciada"},
+  {id:46,cliente:"Ggmar Participacoes E Empreendimentos Imobiliarios Ltda",seguradora:"PORTO SEGURO",tipo:"Residencial",numero:"4203615",premio:653.69,fim:"2026-09-23",obs:"",sr0:"Não iniciada"},
+  {id:47,cliente:"Clarkson Brasil Ltda",seguradora:"AIG",tipo:"Empresarial",numero:"",premio:11468.67,fim:"2026-10-05",obs:"",sr0:"Não iniciada"},
+  {id:48,cliente:"Gustavo De Souza Escobar",seguradora:"AZUL",tipo:"Automóvel",numero:"",premio:0,fim:"2026-10-22",obs:"",sr0:"Não iniciada"},
+  {id:49,cliente:"Bruno Almeida Oliveira",seguradora:"PORTO SEGURO",tipo:"RC Profissional",numero:"",premio:0,fim:"2026-10-27",obs:"",sr0:"Não iniciada"},
+  {id:50,cliente:"Tiago Noleto De Carvalho Capparelli",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"11.0746.000000010783237",premio:0,fim:"2026-10-27",obs:"",sr0:"Não iniciada"},
+  {id:51,cliente:"Noemi Candido Noleto",seguradora:"AZUL",tipo:"Residencial",numero:"4207366",premio:326.89,fim:"2026-11-13",obs:"",sr0:"Não iniciada"},
+  {id:52,cliente:"Chronos Clinica Medica Ltda",seguradora:"AKAD",tipo:"RC Profissional",numero:"250034",premio:5181.36,fim:"2026-11-19",obs:"",sr0:"Não iniciada"},
+  {id:53,cliente:"Gustavo De Souza Escobar",seguradora:"AZUL",tipo:"Automóvel",numero:"",premio:0,fim:"2026-11-22",obs:"",sr0:"Não iniciada"},
+  {id:54,cliente:"Gustavo Berga Consultoria E Atividade Fisica Eirel",seguradora:"MAPFRE",tipo:"Empresarial",numero:"",premio:0,fim:"2026-12-02",obs:"",sr0:"Não iniciada"},
+  {id:55,cliente:"Ana Maria Montandon Chaer",seguradora:"AZUL",tipo:"Automóvel",numero:"11.25.0531.13116519",premio:730.82,fim:"2026-12-16",obs:"",sr0:"Não iniciada"},
+  {id:56,cliente:"Ana Maria Montandon Chaer",seguradora:"AZUL",tipo:"Automóvel",numero:"11.25.0531.13117167",premio:668.70,fim:"2026-12-16",obs:"",sr0:"Não iniciada"},
+  {id:57,cliente:"R Fonseca Advogados",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"",premio:0,fim:"2026-12-17",obs:"",sr0:"Não iniciada"},
+  {id:58,cliente:"Notoriall Financial Serviços De Corretagem",seguradora:"PORTO SEGURO",tipo:"RC Profissional",numero:"",premio:0,fim:"2026-12-18",obs:"",sr0:"Não iniciada"},
+  {id:59,cliente:"Wanessa Cadavid Andrade",seguradora:"AZUL",tipo:"Automóvel",numero:"",premio:0,fim:"2027-01-04",obs:"",sr0:"Não iniciada"},
+  {id:60,cliente:"7 Lm Empreendimentos Imobiliários Ltda",seguradora:"LIBERTY",tipo:"Empresarial",numero:"670920220402664",premio:10761.31,fim:"2027-01-21",obs:"",sr0:"Não iniciada"},
+  {id:61,cliente:"7 Lm Empreendimentos Imobiliários Ltda",seguradora:"LIBERTY",tipo:"Empresarial",numero:"67092022402665",premio:9948.55,fim:"2027-01-21",obs:"",sr0:"Não iniciada"},
+  {id:62,cliente:"T4Isb Tecnologia E Participacoes Ltda Epp",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"0776.11.197-1",premio:22945.60,fim:"2027-01-27",obs:"",sr0:"Não iniciada"},
+  {id:63,cliente:"Maai Servicos De Decoracao E Paisagismo Ltda Me",seguradora:"PORTO SEGURO",tipo:"Empresarial",numero:"",premio:0,fim:"2027-01-30",obs:"",sr0:"Não iniciada"},
+  {id:64,cliente:"Cristiano Nader De Andrade Melo",seguradora:"AKAD",tipo:"RC Profissional",numero:"260035",premio:1000.50,fim:"2027-01-31",obs:"",sr0:"Não iniciada"},
+  {id:65,cliente:"Teofilo Hugo Silva",seguradora:"PORTO SEGURO",tipo:"Automóvel",numero:"",premio:0,fim:"2027-01-31",obs:"",sr0:"Não iniciada"},
+  {id:66,cliente:"Rafael Curado Matta",seguradora:"AZUL",tipo:"Automóvel",numero:"13358547",premio:1502.12,fim:"2027-02-28",obs:"",sr0:"Não iniciada"},
+  {id:67,cliente:"Ana Claudia Goncalves Lima",seguradora:"AZUL",tipo:"Automóvel",numero:"11.26.0531.13338350",premio:3501.51,fim:"2027-03-03",obs:"",sr0:"Não iniciada"},
+  {id:68,cliente:"Tiago Noleto De Carvalho Capparelli",seguradora:"PORTO SEGURO",tipo:"Residencial",numero:"",premio:0,fim:"2027-03-11",obs:"",sr0:"Não iniciada"},
+  {id:69,cliente:"Agnelo & Jardim Advogados",seguradora:"AKAD",tipo:"RC Profissional",numero:"260043",premio:2871.43,fim:"2027-03-17",obs:"",sr0:"Não iniciada"}
+];
+
+// ================================================================
+// STATE
+// ================================================================
+let AP=[], PIPE=[], NID=300;
+let editId=null, chipF='todas', tabU='vc', apSC='urg', apSD=1;
+
+const MOTIVOS_PERDA=['Preço','Concorrente','Sem retorno','Cancelou atividade','Sem interesse','Outra corretora','Outro'];
+const SUGESTOES_FU={'Proposta enviada':'Cobrar retorno da proposta','Em negociação':'Avançar negociação','Aguardando retorno':'Retomar cliente'};
+const ESTAGIOS=['Identificada','Contato feito','Proposta enviada','Em negociação','Aguardando retorno','Renovada','Perdida'];
+
+// ================================================================
+// PERSISTÊNCIA
+// ================================================================
+function save(){ dbSave(); } // async via dbSave
+async function load(){ await dbLoad(); } // async via dbLoad
+function migrate(){
+  AP.forEach(ap=>{
+    if(ap.renovacao_automatica===undefined)ap.renovacao_automatica=ap.tipo==='Vida';
+    if(ap.exigir_acao_comercial===undefined)ap.exigir_acao_comercial=ap.tipo!=='Vida';
+    if(ap.bloquear_automacao===undefined)ap.bloquear_automacao=false;
+    if(!ap.proxima_acao)ap.proxima_acao='';
+    if(!ap.data_proxima_acao)ap.data_proxima_acao='';
+    if(!ap.ultima_interacao)ap.ultima_interacao='';
+    if(!ap.historico)ap.historico=[];
+    if(!ap.motivo_perda)ap.motivo_perda='';
+  });
+}
+function initBase(){
+  AP=BASE.map(d=>({...d,status_renovacao:d.sr0,status_apolice:'Ativa',alerta:'OK',
+    renovacao_automatica:d.tipo==='Vida',exigir_acao_comercial:d.tipo!=='Vida',
+    bloquear_automacao:false,alterado_manualmente:false,motivo_alteracao:'',motivo_perda:'',
+    data_renovacao:'',apolice_substituta:'',responsavel:'',
+    proxima_acao:'',data_proxima_acao:'',ultima_interacao:'',
+    historico:[],inconsistente:false,ts:new Date().toISOString()}));
+  runDaily(true);
+}
+
+// ================================================================
+// HELPERS
+// ================================================================
+const dd=fim=>{if(!fim)return 9999;const h=new Date();h.setHours(0,0,0,0);return Math.round((new Date(fim+'T00:00:00')-h)/86400000);};
+const R=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+const DT=s=>{if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;};
+const DTF=iso=>iso?new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+const today=()=>new Date().toISOString().substring(0,10);
+
+// ================================================================
+// PRIORIDADE POR VENCIMENTO — 7 faixas
+// Retorna: { faixa:0-6, label, tagCls, diasNum }
+// ================================================================
+function urgFaixa(ap){
+  const d=dd(ap.fim);
+  // apólice já encerrada ou vida → sem urgência comercial
+  if(['Renovada','Cancelada','Perdida'].includes(ap.status_apolice)&&!ap.inconsistente) return{faixa:7,label:'—',tagCls:'ut-ok',d};
+  if(ap.renovacao_automatica&&ap.tipo==='Vida') return{faixa:8,label:'Auto',tagCls:'ut-ok',d};
+  if(ap.inconsistente||d<0) return{faixa:0,label:'Vencida',tagCls:'ut-vc',d};
+  if(d===0)  return{faixa:1,label:'Hoje',tagCls:'ut-hj',d};
+  if(d<=7)   return{faixa:2,label:`${d}d`,tagCls:'ut-7',d};
+  if(d<=15)  return{faixa:3,label:`${d}d`,tagCls:'ut-15',d};
+  if(d<=30)  return{faixa:4,label:`${d}d`,tagCls:'ut-30',d};
+  if(d<=60)  return{faixa:5,label:`${d}d`,tagCls:'ut-60',d};
+  return{faixa:6,label:`${d}d`,tagCls:'ut-ok',d};
+}
+
+// Ordena array de apólices por prioridade temporal, depois prêmio dentro da faixa
+function sortPorUrgencia(arr){
+  return [...arr].sort((a,b)=>{
+    const fa=urgFaixa(a),fb=urgFaixa(b);
+    if(fa.faixa!==fb.faixa) return fa.faixa-fb.faixa;
+    // mesma faixa: mais próximo do vencimento primeiro, depois maior prêmio
+    if(fa.d!==fb.d) return fa.d-fb.d;
+    return b.premio-a.premio;
+  });
+}
+
+// ================================================================
+// LÓGICA AUTOMÁTICA
+// ================================================================
+function calcSA(ap){
+  if(ap.bloquear_automacao)return ap.status_apolice;
+  const d=dd(ap.fim),sr=ap.status_renovacao;
+  if(ap.renovacao_automatica&&ap.tipo==='Vida')return'Renovada';
+  if(sr==='Renovada')return'Renovada';
+  if(sr==='Perdida')return'Perdida';
+  if(sr==='Cancelada')return'Cancelada';
+  if(d<0)return'Vencida';
+  if(d<=30)return'Urgente';
+  if(d<=60)return'Vencendo';
+  return'Ativa';
+}
+function calcAlerta(ap){
+  const sa=ap.status_apolice;
+  if(sa==='Renovada')return'Renovada';
+  if(sa==='Perdida')return'Perdida';
+  if(sa==='Cancelada')return'Cancelada';
+  const d=dd(ap.fim);
+  if(d<0)return'Vencida';
+  if(d<=15)return'Urgente';
+  if(d<=30)return'Urgente';
+  if(d<=60)return'Atenção';
+  return'OK';
+}
+function calcInc(ap){
+  if(ap.renovacao_automatica)return false;
+  return dd(ap.fim)<0&&!['Renovada','Perdida','Cancelada'].includes(ap.status_renovacao);
+}
+function sugerirFU(ap){
+  if(!ap.exigir_acao_comercial)return;
+  const sg=SUGESTOES_FU[ap.status_renovacao];
+  if(sg&&!ap.proxima_acao&&!ap.data_proxima_acao){
+    ap.proxima_acao=sg;
+    const t=new Date();t.setDate(t.getDate()+1);
+    ap.data_proxima_acao=t.toISOString().substring(0,10);
+  }
+}
+
+// ================================================================
+// ATUALIZAÇÃO DIÁRIA
+// ================================================================
+function runDaily(silent){
+  const ts=new Date().toISOString();
+  AP.forEach(ap=>{
+    const nSA=calcSA(ap);
+    if(nSA!==ap.status_apolice&&!ap.bloquear_automacao){
+      ap.historico=ap.historico||[];
+      ap.historico.push({data:ts,de:ap.status_apolice,para:nSA,tipo:'auto',motivo:'Atualização automática diária'});
+      ap.status_apolice=nSA;
+    }
+    ap.inconsistente=calcInc(ap);
+    if(ap.inconsistente&&!ap.bloquear_automacao)ap.status_apolice='Vencida';
+    ap.alerta=calcAlerta(ap);
+    sugerirFU(ap);
+    ap.ts=ts;
+  });
+  // Pipeline — EXCLUI Vida automáticas
+  AP.forEach(ap=>{
+    if(ap.renovacao_automatica&&ap.tipo==='Vida')return;
+    if(!ap.exigir_acao_comercial)return;
+    if(['Urgente','Vencendo'].includes(ap.status_apolice)&&!['Renovada','Perdida','Cancelada'].includes(ap.status_renovacao)){
+      if(!PIPE.find(p=>p.ap_id===ap.id)){
+        PIPE.push({id:NID++,nome:`Renovação ${ap.tipo} — ${ap.cliente.split(' ').slice(0,2).join(' ')}`,
+          cliente:ap.cliente,valor:ap.premio,
+          estagio:ap.status_renovacao==='Não iniciada'?'Identificada':ap.status_renovacao,
+          data:ap.fim,ap_id:ap.id,auto:true});
+        if(ap.status_renovacao==='Não iniciada'&&!ap.bloquear_automacao)ap.status_renovacao='Identificada';
+      }
+    }
+  });
+  save();
+  if(!silent){document.getElementById('sync-ts').textContent='Atualizado: '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});renderCurrent();}
+  updateBadges();
+}
+
+// ================================================================
+// FORMATADORES
+// ================================================================
+function urgTag(ap){const u=urgFaixa(ap);return`<span class="urg-tag ${u.tagCls}">${u.label}</span>`;}
+function alertaBadge(ap){
+  if(ap.renovacao_automatica&&ap.tipo==='Vida')return`<span class="badge b-vi">Auto-renovável</span>`;
+  const a=ap.inconsistente?'Inconsistente':ap.alerta;
+  const m={OK:'b-at',Atenção:'b-ve',Urgente:'b-ur',Vencida:'b-vc',Renovada:'b-rv',Perdida:'b-pd',Cancelada:'b-ca',Inconsistente:'b-in'};
+  return`<span class="badge ${m[a]||'b-vc'}">${a}</span>`;
+}
+function saBadge(s){const m={Ativa:'b-at',Urgente:'b-ur',Vencendo:'b-ve',Vencida:'b-vc',Renovada:'b-rv',Perdida:'b-pd',Cancelada:'b-ca'};return`<span class="badge ${m[s]||'b-vc'}">${s}</span>`;}
+function srBadge(s,ap){
+  if(ap&&ap.renovacao_automatica&&ap.tipo==='Vida')return`<span class="badge b-auto">Renovação automática</span>`;
+  const m={'Não iniciada':'b-ni',Identificada:'b-id','Contato feito':'b-cf','Proposta enviada':'b-pe','Em negociação':'b-ng','Aguardando retorno':'b-ag',Renovada:'b-rr',Perdida:'b-rp',Cancelada:'b-ca'};
+  return`<span class="badge ${m[s]||'b-ni'}">${s||'Não iniciada'}</span>`;
+}
+function tipoBadge(t){const m={'RC Profissional':'t-rc',Empresarial:'t-em',Automóvel:'t-au',Residencial:'t-re',Vida:'t-vi'};return`<span class="tb ${m[t]||'t-ou'}">${t}</span>`;}
+function fuBadge(ap){
+  if(!ap.data_proxima_acao)return'<span class="fu-o">—</span>';
+  const d=dd(ap.data_proxima_acao);
+  const cls=d<0?'fu-d':d<=1?'fu-d':d<=3?'fu-s':'fu-o';
+  return`<span class="${cls}" title="${ap.proxima_acao||''}">${d<0?Math.abs(d)+'d atraso':d===0?'Hoje':d+'d'}</span>`;
+}
+function rowCls(ap){
+  if(ap.tipo==='Vida'&&ap.renovacao_automatica)return'rvi';
+  if(ap.inconsistente)return'ri';
+  const d=dd(ap.fim);
+  if(d<0||ap.status_apolice==='Vencida')return'rv';
+  if(d<=7||ap.status_apolice==='Urgente')return'ru';
+  return'';
+}
+
+// ================================================================
+// NAVEGAÇÃO
+// ================================================================
+let curPage='dash';
+function goPage(p){
+  document.querySelectorAll('.page').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.ni').forEach(e=>e.classList.remove('on'));
+  document.getElementById('page-'+p).style.display='';
+  document.getElementById('nav-'+p).classList.add('on');
+  curPage=p;renderPage(p);
+}
+function renderCurrent(){renderPage(curPage);}
+function renderPage(p){
+  if(p==='dash')renderDash();
+  if(p==='apolices')renderAp();
+  if(p==='urgentes')renderUrg();
+  if(p==='pipeline')renderPipe();
+  if(p==='analytics')renderAnalytics();
+}
+
+// ================================================================
+// DASHBOARD
+// ================================================================
+function renderDash(){
+  const hoje=new Date();
+  document.getElementById('dash-dt').textContent=hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const ativas=AP.filter(a=>['Ativa','Vencendo','Urgente'].includes(a.status_apolice));
+  const v30=AP.filter(a=>{const d=dd(a.fim);return d>=0&&d<=30&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice)&&a.tipo!=='Vida';});
+  const v60=AP.filter(a=>{const d=dd(a.fim);return d>30&&d<=60&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice)&&a.tipo!=='Vida';});
+  const renovadas=AP.filter(a=>a.status_apolice==='Renovada');
+  const vencSemDef=AP.filter(a=>a.inconsistente||a.status_apolice==='Vencida');
+
+  document.getElementById('dash-m').innerHTML=`
+    <div class="mc mc-g"><div class="ml">Apólices ativas</div><div class="mv mv-g">${ativas.length}</div><div class="ms">${R(ativas.reduce((s,a)=>s+a.premio,0))}</div></div>
+    <div class="mc mc-r"><div class="ml">Vencendo em 30 dias</div><div class="mv mv-r">${v30.length}</div><div class="ms">${R(v30.reduce((s,a)=>s+a.premio,0))} em risco</div></div>
+    <div class="mc mc-a"><div class="ml">Vencendo em 60 dias</div><div class="mv mv-a">${v60.length}</div><div class="ms">${R(v60.reduce((s,a)=>s+a.premio,0))}</div></div>
+    <div class="mc mc-b"><div class="ml">Renovadas</div><div class="mv mv-b">${renovadas.length}</div><div class="ms">${R(renovadas.reduce((s,a)=>s+a.premio,0))}</div></div>
+    <div class="mc mc-gr"><div class="ml">Vencidas s/ definição</div><div class="mv ${vencSemDef.length>0?'mv-r':''}">${vencSemDef.length}</div><div class="ms">Requerem ação</div></div>
+  `;
+
+  // Banners
+  let b='';
+  if(vencSemDef.length) b+=`<div class="bnr bnr-r">⚠ ${vencSemDef.length} apólice(s) vencida(s) sem definição — resolva abaixo.</div>`;
+  if(v30.length) b+=`<div class="bnr bnr-a">◉ ${v30.length} apólice(s) comerciais vencendo em até 30 dias — ${R(v30.reduce((s,a)=>s+a.premio,0))} em risco.</div>`;
+  document.getElementById('banners').innerHTML=b;
+
+  // Painel de vendas
+  const ab=PIPE.filter(p=>!['Renovada','Perdida'].includes(p.estagio));
+  const gn=PIPE.filter(p=>p.estagio==='Renovada');
+  const pd=PIPE.filter(p=>p.estagio==='Perdida');
+  const pe=PIPE.filter(p=>p.estagio==='Proposta enviada');
+  const ng=PIPE.filter(p=>p.estagio==='Em negociação');
+  const ag=PIPE.filter(p=>p.estagio==='Aguardando retorno');
+  document.getElementById('pv-top').innerHTML=`
+    <div class="pv-i"><div class="pv-l">Em aberto</div><div class="pv-v mv-b">${ab.length}</div><div class="pv-s">${R(ab.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="pv-i"><div class="pv-l">Proposta enviada</div><div class="pv-v mv-b">${pe.length}</div><div class="pv-s">${R(pe.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="pv-i"><div class="pv-l">Em negociação</div><div class="pv-v mv-a">${ng.length}</div><div class="pv-s">${R(ng.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="pv-i"><div class="pv-l">Aguardando retorno</div><div class="pv-v mv-a">${ag.length}</div><div class="pv-s">${R(ag.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+  `;
+  const taxa=PIPE.length>0?Math.round(gn.length/PIPE.length*100):0;
+  document.getElementById('pv-bot').innerHTML=`
+    <div class="pv-i"><div class="pv-l">Ganhos</div><div class="pv-v mv-g">${gn.length}</div><div class="pv-s">${R(gn.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="pv-i"><div class="pv-l">Perdidos</div><div class="pv-v mv-r">${pd.length}</div><div class="pv-s">${R(pd.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="pv-i"><div class="pv-l">Taxa de conversão</div><div class="pv-v">${taxa}%</div><div class="pv-s">${gn.length} de ${PIPE.length}</div></div>
+    <div class="pv-i"><div class="pv-l">Potencial aberto</div><div class="pv-v mv-b">${R(ab.reduce((s,p)=>s+Number(p.valor||0),0))}</div><div class="pv-s">Oportunidades ativas</div></div>
+  `;
+
+  // AÇÃO DO DIA — ordenado por vencimento, exclui Vida
+  const comerciais=sortPorUrgencia(
+    AP.filter(a=>a.exigir_acao_comercial&&!(a.renovacao_automatica&&a.tipo==='Vida')&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice))
+  ).slice(0,15);
+
+  if(!comerciais.length){document.getElementById('acao-list').innerHTML='<div class="empty">Nenhuma apólice requer ação comercial hoje.</div>';return;}
+
+  // Agrupa por faixa para cabeçalhos
+  let html='', lastFaixa=-1;
+  const grpLabels={0:'Vencidas sem definição — ação urgente',1:'Vencendo hoje',2:'Próximos 7 dias',3:'Próximos 15 dias',4:'Próximos 30 dias',5:'Próximos 60 dias',6:'Acima de 60 dias'};
+  comerciais.forEach((ap,i)=>{
+    const u=urgFaixa(ap);
+    if(u.faixa!==lastFaixa){
+      lastFaixa=u.faixa;
+      html+=`<div class="ad-group-lbl">${grpLabels[u.faixa]||''}</div>`;
+    }
+    const d=dd(ap.fim);
+    const dc=d<0?'color:var(--r)':d===0?'color:var(--r)':d<=7?'color:var(--r)':d<=30?'color:var(--a)':'color:var(--tx3)';
+    const dLbl=d<0?Math.abs(d)+'d atrás':d===0?'Hoje':d+'d';
+    const grpCls=u.faixa===0?'ad-item grp-vc':u.faixa===1?'ad-item grp-hj':'ad-item';
+    html+=`<div class="${grpCls}" onclick="abrirStatus(${ap.id})">
+      <div class="ad-n">${i+1}</div>
+      <div><div class="ad-cli">${ap.cliente}</div><div class="ad-meta">${tipoBadge(ap.tipo)} ${srBadge(ap.status_renovacao,ap)}</div></div>
+      <div class="ad-seg">${ap.seguradora}</div>
+      <div class="ad-dias" style="${dc}">${dLbl}</div>
+      <div class="ad-pre">${ap.premio>0?R(ap.premio):'—'}</div>
+      <div><button class="ab ab-w" onclick="event.stopPropagation();wpp(${ap.id})">Wpp</button></div>
+    </div>`;
+  });
+  document.getElementById('acao-list').innerHTML=html;
+
+  // Charts
+  const vd={};const nm={1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
+  AP.filter(a=>a.fim&&!['Renovada','Cancelada'].includes(a.status_apolice)&&a.tipo!=='Vida').forEach(a=>{
+    const d2=dd(a.fim);if(d2<0||d2>90)return;const k=a.fim.substring(0,7);vd[k]=(vd[k]||0)+1;
+  });
+  renderBC('ch-venc',Object.entries(vd).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>{const[y,m]=k.split('-');return{l:`${nm[+m]}/${y.slice(2)}`,v,f:`${v}`};}),null,'var(--a)');
+  const td={};const tc={'RC Profissional':'#1A4E8C',Empresarial:'#1F6B3A',Automóvel:'#B7600A',Residencial:'#5B3FA6',Vida:'var(--tl)'};
+  AP.filter(a=>a.status_apolice!=='Cancelada').forEach(a=>{td[a.tipo]=(td[a.tipo]||0)+a.premio;});
+  const tmx=Math.max(...Object.values(td),1);
+  renderBC('ch-tipo',Object.entries(td).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({l:k,v,f:R(v),mx:tmx,c:tc[k]||'#888'})),true);
+
+  // Inconsistentes
+  const toRes=AP.filter(a=>a.inconsistente||a.status_apolice==='Vencida');
+  document.getElementById('lista-inc').innerHTML=toRes.length
+    ?`<table style="width:100%;font-size:12px;border-collapse:collapse">
+      <tr style="font-size:10px;color:var(--tx3)"><th style="text-align:left;padding:4px 8px;font-weight:700">Cliente</th><th style="text-align:left;padding:4px 8px;font-weight:700">Tipo</th><th style="text-align:left;padding:4px 8px;font-weight:700">Vencimento</th><th style="text-align:left;padding:4px 8px;font-weight:700">Prêmio</th><th style="text-align:left;padding:4px 8px;font-weight:700">Renovação</th><th></th></tr>
+      ${toRes.map(a=>`<tr style="border-top:1px solid var(--bd)"><td style="padding:7px 8px;font-weight:500">${a.cliente}</td><td style="padding:7px 8px">${tipoBadge(a.tipo)}</td><td style="padding:7px 8px;color:var(--r);font-family:var(--mo)">${DT(a.fim)}</td><td style="padding:7px 8px;font-family:var(--mo)">${a.premio>0?R(a.premio):'—'}</td><td style="padding:7px 8px">${srBadge(a.status_renovacao,a)}</td><td style="padding:7px 8px"><button class="ab" onclick="abrirStatus(${a.id})">Resolver →</button></td></tr>`).join('')}
+    </table>`
+    :`<div style="font-size:12px;color:var(--g);padding:8px 0">Nenhuma inconsistência.</div>`;
+}
+
+// ================================================================
+// CHARTS
+// ================================================================
+function renderBC(id,data,useItemC,defC){
+  const el=document.getElementById(id);if(!el)return;
+  if(!data||!data.length){el.innerHTML='<div style="font-size:12px;color:var(--tx3)">Sem dados</div>';return;}
+  const mx=data[0].mx||Math.max(...data.map(x=>x.v),1);
+  el.innerHTML=data.map(d=>`<div class="br"><span class="bl2">${d.l}</span><div class="bt2"><div class="bf2" style="width:${Math.round(d.v/mx*100)}%;background:${useItemC?d.c:defC}"></div></div><span class="bv2">${d.f}</span></div>`).join('');
+}
+
+// ================================================================
+// APÓLICES TABLE
+// ================================================================
+function setChip(v,el){chipF=v;document.querySelectorAll('#chips-ap .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');renderAp();}
+function sortAp(col){
+  if(apSC===col)apSD*=-1;else{apSC=col;apSD=col==='urg'||col==='dias'||col==='fim'?1:-1;}
+  renderAp();
+}
+function renderAp(){
+  const q=(document.getElementById('s-ap')||{value:''}).value.toLowerCase();
+  const fsa=(document.getElementById('f-sa')||{value:''}).value;
+  const ftp=(document.getElementById('f-tp')||{value:''}).value;
+  const fsg=(document.getElementById('f-sg')||{value:''}).value;
+  const sel=document.getElementById('f-sg');
+  if(sel&&sel.options.length<=1)[...new Set(AP.map(a=>a.seguradora))].sort().forEach(s=>{const o=document.createElement('option');o.value=o.textContent=s;sel.appendChild(o);});
+  let f=AP.filter(a=>{
+    const mq=!q||a.cliente.toLowerCase().includes(q)||a.seguradora.toLowerCase().includes(q)||(a.numero||'').toLowerCase().includes(q);
+    const msa=!fsa||a.status_apolice===fsa;
+    const mtp=!ftp||a.tipo===ftp;
+    const msg=!fsg||a.seguradora===fsg;
+    let mc=true;
+    const d=dd(a.fim);
+    if(chipF==='urgente')mc=a.status_apolice==='Urgente'||(d>=0&&d<=30&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice)&&a.tipo!=='Vida');
+    if(chipF==='vencida')mc=a.status_apolice==='Vencida';
+    if(chipF==='renovada')mc=a.status_apolice==='Renovada';
+    if(chipF==='perdida')mc=a.status_apolice==='Perdida';
+    if(chipF==='inc')mc=a.inconsistente;
+    if(chipF==='fu')mc=!!a.data_proxima_acao&&dd(a.data_proxima_acao)<=0;
+    if(chipF==='vida')mc=a.tipo==='Vida'&&a.renovacao_automatica;
+    return mq&&msa&&mtp&&msg&&mc;
+  });
+  // Ordenação
+  if(apSC==='urg'||apSC==='dias'||apSC==='fim'){
+    f=sortPorUrgencia(f);if(apSD===-1)f.reverse();
+  } else {
+    f.sort((a,b)=>{
+      let va,vb;
+      if(apSC==='premio'){va=a.premio;vb=b.premio;}
+      else if(apSC==='dpa'){va=a.data_proxima_acao||'9';vb=b.data_proxima_acao||'9';return(va<vb?-1:va>vb?1:0);}
+      else{va=(a[apSC]||'').toLowerCase();vb=(b[apSC]||'').toLowerCase();}
+      return(va<vb?-1:va>vb?1:0)*apSD;
+    });
+  }
+  const tb=document.getElementById('tb-ap'),em=document.getElementById('em-ap');
+  if(!f.length){tb.innerHTML='';em.style.display='';document.getElementById('cnt-ap').textContent='';return;}
+  em.style.display='none';
+  tb.innerHTML=f.map(a=>{
+    const d=dd(a.fim);
+    const dStr=d===9999?'—':d<0?`<span style="color:var(--r);font-weight:700">${d}d</span>`:`<span style="color:${d<=7?'var(--r)':d<=30?'var(--r)':d<=60?'var(--a)':'var(--tx3)'};font-weight:${d<=60?'600':'400'}">${d}d</span>`;
+    const autoLbl=a.renovacao_automatica&&a.tipo==='Vida'?`<span class="flag-auto">auto</span>`:'';
+    const blkLbl=a.bloquear_automacao?`<span class="b-blk">manual</span>`:'';
+    return`<tr class="${rowCls(a)}">
+      <td>${urgTag(a)}</td>
+      <td style="font-weight:500;max-width:175px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.cliente}${a.inconsistente?`<span class="flag-inc"></span>`:''}${autoLbl}${blkLbl}</td>
+      <td>${tipoBadge(a.tipo)}</td>
+      <td style="font-size:12px">${a.seguradora}</td>
+      <td style="font-family:var(--mo);font-size:12px">${a.premio>0?R(a.premio):'—'}</td>
+      <td style="font-family:var(--mo);font-size:12px;white-space:nowrap">${DT(a.fim)}</td>
+      <td>${dStr}</td>
+      <td>${saBadge(a.status_apolice)}</td>
+      <td>${srBadge(a.status_renovacao,a)}</td>
+      <td>${fuBadge(a)}</td>
+      <td style="white-space:nowrap;display:flex;gap:4px">
+        <button class="ab" onclick="abrirStatus(${a.id})">Editar</button>
+        ${d>=0&&d<=60&&!['Renovada','Cancelada'].includes(a.status_apolice)&&a.tipo!=='Vida'?`<button class="ab ab-w" onclick="wpp(${a.id})">Wpp</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cnt-ap').textContent=`${f.length} de ${AP.length} apólices`;
+  document.getElementById('ap-sub').textContent=`Carteira completa — ${AP.length} apólices · ${AP.filter(a=>a.tipo==='Vida'&&a.renovacao_automatica).length} Vida automáticas`;
+}
+
+// ================================================================
+// URGENTES — baseado apenas em vencimento e inconsistência
+// ================================================================
+function setTabU(v,el){tabU=v;document.querySelectorAll('.tabs .tb2').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderUrg();}
+function renderUrg(){
+  const exclui=a=>['Renovada','Cancelada'].includes(a.status_apolice)||a.tipo==='Vida';
+  let list=[];
+  if(tabU==='vc') list=AP.filter(a=>!exclui(a)&&(a.inconsistente||a.status_apolice==='Vencida'||dd(a.fim)<0));
+  if(tabU==='hj') list=AP.filter(a=>!exclui(a)&&dd(a.fim)===0);
+  if(tabU==='30') list=AP.filter(a=>!exclui(a)&&dd(a.fim)>=0&&dd(a.fim)<=30);
+  if(tabU==='60') list=AP.filter(a=>!exclui(a)&&dd(a.fim)>=0&&dd(a.fim)<=60);
+  list=sortPorUrgencia(list);
+  const tb=document.getElementById('tb-urg'),em=document.getElementById('em-urg');
+  if(!list.length){tb.innerHTML='';em.style.display='';return;}
+  em.style.display='none';
+  tb.innerHTML=list.map(a=>{
+    const d=dd(a.fim);
+    return`<tr class="${rowCls(a)}">
+      <td>${urgTag(a)}</td>
+      <td style="font-weight:500">${a.cliente}${a.inconsistente?`<span class="flag-inc"></span>`:''}</td>
+      <td>${tipoBadge(a.tipo)}</td>
+      <td style="font-size:12px">${a.seguradora}</td>
+      <td style="font-family:var(--mo);font-size:12px">${DT(a.fim)}</td>
+      <td style="font-weight:700;color:${d<0?'var(--r)':d<=7?'var(--r)':d<=30?'var(--r)':'var(--a)'}">${d<0?Math.abs(d)+'d atrás':d+'d'}</td>
+      <td style="font-family:var(--mo);font-size:12px">${a.premio>0?R(a.premio):'—'}</td>
+      <td>${srBadge(a.status_renovacao,a)}</td>
+      <td>${fuBadge(a)}</td>
+      <td style="white-space:nowrap;display:flex;gap:4px">
+        <button class="ab" onclick="abrirStatus(${a.id})">Editar</button>
+        <button class="ab ab-w" onclick="wpp(${a.id})">Wpp</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ================================================================
+// PIPELINE — drag and drop (sem score)
+// ================================================================
+function renderPipe(){
+  const ab=PIPE.filter(p=>!['Renovada','Perdida'].includes(p.estagio));
+  const gn=PIPE.filter(p=>p.estagio==='Renovada');
+  const pd=PIPE.filter(p=>p.estagio==='Perdida');
+  document.getElementById('pipe-m').innerHTML=`
+    <div class="mc mc-b"><div class="ml">Em aberto</div><div class="mv mv-b">${ab.length}</div><div class="ms">${R(ab.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="mc mc-g"><div class="ml">Ganhos</div><div class="mv mv-g">${gn.length}</div><div class="ms">${R(gn.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="mc mc-r"><div class="ml">Perdidos</div><div class="mv mv-r">${pd.length}</div><div class="ms">${R(pd.reduce((s,p)=>s+Number(p.valor||0),0))}</div></div>
+    <div class="mc mc-gr"><div class="ml">Taxa conversão</div><div class="mv">${PIPE.length>0?Math.round(gn.length/PIPE.length*100):0}%</div><div class="ms">${gn.length} de ${PIPE.length}</div></div>
+  `;
+  const board=document.getElementById('pipe-board');
+  board.innerHTML=ESTAGIOS.map(est=>{
+    // ordenar cards por urgência (vencimento)
+    const cards=PIPE.filter(p=>p.estagio===est).sort((a,b)=>{
+      const da=AP.find(x=>x.id===a.ap_id),db=AP.find(x=>x.id===b.ap_id);
+      const fa=da?urgFaixa(da).faixa:6,fb=db?urgFaixa(db).faixa:6;
+      if(fa!==fb)return fa-fb;
+      return(da?dd(da.fim):9999)-(db?dd(db.fim):9999);
+    });
+    const tot=cards.reduce((s,c)=>s+Number(c.valor||0),0);
+    const isW=est==='Renovada',isL=est==='Perdida';
+    const colCls=isW?'pipe-col pipe-col-won':isL?'pipe-col pipe-col-lost':'pipe-col';
+    return`<div class="${colCls}" data-est="${est}"
+        ondragover="onDO(event,this)" ondragleave="onDL(this)" ondrop="onDP(event,this,'${est}')">
+      <div class="phd"><span class="pnm">${est}</span><span class="pcnt">${cards.length}</span></div>
+      <div class="ptot">${R(tot)}</div>
+      ${cards.map(c=>{
+        const ap=AP.find(a=>a.id===c.ap_id);
+        const d=ap?dd(ap.fim):9999;
+        const dc=d<0?'color:var(--r)':d<=7?'color:var(--r)':d<=30?'color:var(--r)':d<=60?'color:var(--a)':'color:var(--tx3)';
+        const urgCls=d<=7?'pcard urgent':d<=30?'pcard warn':'pcard';
+        const dLbl=d===9999?'—':d<0?Math.abs(d)+'d atrás':d===0?'Hoje':d+'d';
+        return`<div class="${urgCls}" draggable="true" data-cid="${c.id}" data-apid="${c.ap_id||0}"
+            ondragstart="onDS(event)" ondragend="onDE(event)">
+          <div class="pc-n">${c.cliente.split(' ').slice(0,3).join(' ')}</div>
+          <div class="pc-tp">${tipoBadge(ap?ap.tipo:c.nome.split(' ')[1]||'')}</div>
+          <div class="pc-row">
+            <span class="pc-val">${c.valor>0?R(c.valor):'—'}</span>
+            <span class="pc-dias" style="${dc}">${dLbl}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+function onDS(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',e.currentTarget.dataset.cid);}
+function onDE(e){e.currentTarget.classList.remove('dragging');document.querySelectorAll('.pipe-col').forEach(c=>c.classList.remove('dov','dov-w','dov-l'));}
+function onDO(e,col){e.preventDefault();const est=col.dataset.est;col.classList.remove('dov','dov-w','dov-l');col.classList.add(est==='Renovada'?'dov-w':est==='Perdida'?'dov-l':'dov');}
+function onDL(col){col.classList.remove('dov','dov-w','dov-l');}
+function onDP(e,col,novoEst){
+  e.preventDefault();col.classList.remove('dov','dov-w','dov-l');
+  const cid=parseInt(e.dataTransfer.getData('text/plain'));
+  const card=PIPE.find(p=>p.id===cid);
+  if(!card||card.estagio===novoEst)return;
+  const antEst=card.estagio;
+  card.estagio=novoEst;
+  if(card.ap_id){
+    const ap=AP.find(a=>a.id===card.ap_id);
+    if(ap){
+      const ts=new Date().toISOString();
+      ap.historico=ap.historico||[];
+      ap.historico.push({data:ts,de:ap.status_renovacao,para:novoEst,tipo:'pipeline',motivo:`Pipeline: ${antEst} → ${novoEst}`});
+      ap.status_renovacao=novoEst;
+      if(novoEst==='Renovada'){ap.status_apolice='Renovada';ap.alerta='Renovada';ap.bloquear_automacao=true;ap.data_renovacao=today();}
+      else if(novoEst==='Perdida'){
+        ap.status_apolice='Perdida';ap.alerta='Perdida';ap.bloquear_automacao=true;
+        const mt=prompt('Motivo da perda (opcional):\n'+MOTIVOS_PERDA.map((m,i)=>`${i+1}. ${m}`).join('\n')||'');
+        if(mt)ap.motivo_perda=mt;
+      }
+      ap.ts=ts;
+    }
+  }
+  save();renderPipe();updateBadges();
+}
+
+// ================================================================
+// ANALYTICS
+// ================================================================
+function renderAnalytics(){
+  const at=AP.filter(a=>['Ativa','Vencendo','Urgente'].includes(a.status_apolice));
+  const rv=AP.filter(a=>a.status_apolice==='Renovada');
+  const pd2=AP.filter(a=>a.status_apolice==='Perdida');
+  const vc=AP.filter(a=>a.inconsistente||a.status_apolice==='Vencida');
+  document.getElementById('an-m').innerHTML=`
+    <div class="mc mc-g"><div class="ml">Prêmio ativo</div><div class="mv mv-g" style="font-size:17px">${R(at.reduce((s,a)=>s+a.premio,0))}</div><div class="ms">${at.length} apólices</div></div>
+    <div class="mc mc-b"><div class="ml">Prêmio renovado</div><div class="mv mv-b" style="font-size:17px">${R(rv.reduce((s,a)=>s+a.premio,0))}</div><div class="ms">${rv.length} apólices</div></div>
+    <div class="mc mc-r"><div class="ml">Prêmio perdido</div><div class="mv mv-r" style="font-size:17px">${R(pd2.reduce((s,a)=>s+a.premio,0))}</div><div class="ms">${pd2.length} apólices</div></div>
+    <div class="mc mc-gr"><div class="ml">Vencidas s/ def.</div><div class="mv" style="font-size:17px">${vc.length}</div><div class="ms">${R(vc.reduce((s,a)=>s+a.premio,0))}</div></div>
+  `;
+  const segs={};AP.filter(a=>a.status_apolice!=='Cancelada').forEach(a=>{segs[a.seguradora]=(segs[a.seguradora]||0)+a.premio;});
+  renderBC('ch-seg',Object.entries(segs).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>({l:k,v,f:R(v)})),false,'var(--bl)');
+  const td2={};const tc={'RC Profissional':'#1A4E8C',Empresarial:'#1F6B3A',Automóvel:'#B7600A',Residencial:'#5B3FA6',Vida:'var(--tl)'};
+  AP.filter(a=>a.status_apolice!=='Cancelada').forEach(a=>{td2[a.tipo]=(td2[a.tipo]||0)+a.premio;});
+  const tmx2=Math.max(...Object.values(td2),1);
+  renderBC('ch-tipo2',Object.entries(td2).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({l:k,v,f:R(v),mx:tmx2,c:tc[k]||'#888'})),true);
+  const nm2={1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
+  const ms2={};AP.filter(a=>a.fim&&!['Renovada','Cancelada'].includes(a.status_apolice)).forEach(a=>{const k=a.fim.substring(0,7);ms2[k]=(ms2[k]||0)+1;});
+  renderBC('ch-mes',Object.entries(ms2).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>{const[y,m]=k.split('-');return{l:`${nm2[+m]}/${y.slice(2)}`,v,f:`${v}`};}),false,'var(--a)');
+  const st2={};AP.forEach(a=>{st2[a.status_apolice]=(st2[a.status_apolice]||0)+1;});
+  const sc={Ativa:'var(--g)',Urgente:'var(--r)',Vencendo:'var(--a)',Vencida:'#888',Renovada:'var(--bl)',Perdida:'var(--r)',Cancelada:'#aaa'};
+  const smx=Math.max(...Object.values(st2),1);
+  renderBC('ch-st',Object.entries(st2).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({l:k,v,f:`${v}`,mx:smx,c:sc[k]||'#888'})),true);
+}
+
+// ================================================================
+// MODAL STATUS
+// ================================================================
+let mpSel='';
+function abrirStatus(id){
+  editId=id;const ap=AP.find(a=>a.id===id);if(!ap)return;
+  document.getElementById('ms-tit').textContent=ap.cliente.split(' ').slice(0,3).join(' ');
+  document.getElementById('ms-sub').textContent=`${ap.tipo} · ${ap.seguradora} · Vence: ${DT(ap.fim)}`;
+  document.getElementById('e-sa').value=ap.status_apolice;
+  document.getElementById('e-sr').value=ap.status_renovacao||'Não iniciada';
+  document.getElementById('e-subs').value=ap.apolice_substituta||'';
+  document.getElementById('e-dtr').value=ap.data_renovacao||'';
+  document.getElementById('e-pa').value=ap.proxima_acao||'';
+  document.getElementById('e-dpa').value=ap.data_proxima_acao||'';
+  document.getElementById('e-ui').value=ap.ultima_interacao||'';
+  document.getElementById('e-mot').value='';
+  document.getElementById('e-mot').classList.remove('dn');
+  document.getElementById('e-obsp').value='';
+  mpSel=ap.motivo_perda||'';
+  const sr=ap.status_renovacao;
+  document.getElementById('blk-ren').style.display=sr==='Renovada'?'':'none';
+  document.getElementById('blk-per').style.display=sr==='Perdida'?'':'none';
+  renderMpGrid();
+  // sugestão FU
+  const sg=SUGESTOES_FU[sr];
+  const fsgEl=document.getElementById('fu-sg');
+  if(sg&&!ap.proxima_acao){fsgEl.style.display='';fsgEl.textContent=`Sugestão: "${sg}" — clique para usar`;fsgEl.onclick=()=>{document.getElementById('e-pa').value=sg;const t=new Date();t.setDate(t.getDate()+1);document.getElementById('e-dpa').value=t.toISOString().substring(0,10);fsgEl.style.display='none';};}
+  else fsgEl.style.display='none';
+  const bn=document.getElementById('ms-ban');
+  if(ap.inconsistente){bn.style.display='';bn.textContent='⚠ Apólice vencida sem definição — atualize o status de renovação.';}
+  else if(ap.bloquear_automacao){bn.style.display='';bn.textContent='🔒 Automação bloqueada — use "Reset automação" para reativar.';}
+  else bn.style.display='none';
+  document.getElementById('btn-reset').style.display=ap.bloquear_automacao?'':'none';
+  document.getElementById('blk-info').textContent=ap.bloquear_automacao?'Automação desativada':'Automação ativa';
+  const hist=(ap.historico||[]).slice(-8).reverse();
+  document.getElementById('hist-list').innerHTML=hist.length
+    ?hist.map(h=>`<div class="hi"><div class="ht">${DTF(h.data)} · <strong>${h.tipo==='auto'?'Auto':h.tipo==='pipeline'?'Pipeline':'Manual'}</strong></div><div class="ha2">${h.de||'—'} → ${h.para}</div>${h.motivo?`<div class="ho">${h.motivo}</div>`:''}</div>`).join('')
+    :`<div style="font-size:12px;color:var(--tx3)">Sem histórico.</div>`;
+  openM('m-status');
+}
+function renderMpGrid(){document.getElementById('mp-g').innerHTML=MOTIVOS_PERDA.map(m=>`<div class="mp-o${mpSel===m?' on':''}" onclick="selMp('${m}',this)">${m}</div>`).join('');}
+function selMp(v,el){mpSel=v;document.querySelectorAll('.mp-o').forEach(e=>e.classList.remove('on'));el.classList.add('on');}
+function onSrCh(){
+  const sr=document.getElementById('e-sr').value;
+  document.getElementById('blk-ren').style.display=sr==='Renovada'?'':'none';
+  document.getElementById('blk-per').style.display=sr==='Perdida'?'':'none';
+  const sg=SUGESTOES_FU[sr];const fsgEl=document.getElementById('fu-sg');
+  if(sg&&!document.getElementById('e-pa').value){fsgEl.style.display='';fsgEl.textContent=`Sugestão: "${sg}" — clique para usar`;fsgEl.onclick=()=>{document.getElementById('e-pa').value=sg;const t=new Date();t.setDate(t.getDate()+1);document.getElementById('e-dpa').value=t.toISOString().substring(0,10);fsgEl.style.display='none';};}
+  else fsgEl.style.display='none';
+}
+function salvarStatus(){
+  const ap=AP.find(a=>a.id===editId);if(!ap)return;
+  const mot=document.getElementById('e-mot').value.trim();
+  if(!mot){document.getElementById('e-mot').classList.add('dn');document.getElementById('e-mot').focus();return;}
+  const nSA=document.getElementById('e-sa').value,nSR=document.getElementById('e-sr').value;
+  const ts=new Date().toISOString();
+  ap.historico=ap.historico||[];
+  if(nSA!==ap.status_apolice)ap.historico.push({data:ts,de:ap.status_apolice,para:nSA,tipo:'manual',motivo:mot});
+  if(nSR!==ap.status_renovacao)ap.historico.push({data:ts,de:ap.status_renovacao||'',para:nSR,tipo:'manual',motivo:mot});
+  ap.status_apolice=nSA;ap.status_renovacao=nSR;
+  ap.apolice_substituta=document.getElementById('e-subs').value;
+  ap.data_renovacao=document.getElementById('e-dtr').value;
+  ap.proxima_acao=document.getElementById('e-pa').value;
+  ap.data_proxima_acao=document.getElementById('e-dpa').value;
+  ap.ultima_interacao=document.getElementById('e-ui').value;
+  ap.motivo_alteracao=mot;
+  if(nSR==='Perdida')ap.motivo_perda=mpSel||document.getElementById('e-obsp').value;
+  ap.bloquear_automacao=true;ap.alterado_manualmente=true;
+  ap.inconsistente=calcInc(ap);ap.alerta=calcAlerta(ap);ap.ts=ts;
+  const pe=PIPE.find(p=>p.ap_id===ap.id);
+  if(pe){if(nSR==='Renovada')pe.estagio='Renovada';else if(nSR==='Perdida')pe.estagio='Perdida';else pe.estagio=nSR==='Não iniciada'?pe.estagio:nSR;}
+  save();closeM('m-status');renderCurrent();updateBadges();
+}
+function resetAuto(){
+  const ap=AP.find(a=>a.id===editId);if(!ap)return;
+  if(!confirm(`Reativar automação para "${ap.cliente.split(' ').slice(0,2).join(' ')}"?`))return;
+  ap.historico.push({data:new Date().toISOString(),de:ap.status_apolice,para:'[automação reativada]',tipo:'manual',motivo:'Reset manual'});
+  ap.bloquear_automacao=false;ap.alterado_manualmente=false;
+  save();closeM('m-status');runDaily(false);
+}
+
+// ================================================================
+// NOVA APÓLICE
+// ================================================================
+function salvarNovaAp(){
+  const c=document.getElementById('na-c').value.trim(),f2=document.getElementById('na-f').value;
+  if(!c||!f2){alert('Preencha cliente e vencimento.');return;}
+  const tipo=document.getElementById('na-t').value,isV=tipo==='Vida';
+  const ap={id:NID++,cliente:c,seguradora:document.getElementById('na-s').value,tipo,
+    numero:document.getElementById('na-n').value,premio:Number(document.getElementById('na-p').value)||0,
+    inicio:'',fim:f2,obs:document.getElementById('na-o').value,
+    status_renovacao:isV?'Renovada':(document.getElementById('na-sr').value),
+    responsavel:document.getElementById('na-r').value,
+    renovacao_automatica:isV,exigir_acao_comercial:!isV,
+    status_apolice:'Ativa',alerta:'OK',bloquear_automacao:false,alterado_manualmente:false,
+    motivo_alteracao:'',motivo_perda:'',data_renovacao:'',apolice_substituta:'',
+    proxima_acao:'',data_proxima_acao:'',ultima_interacao:'',historico:[],inconsistente:false,ts:new Date().toISOString()};
+  ap.status_apolice=calcSA(ap);ap.alerta=calcAlerta(ap);ap.inconsistente=calcInc(ap);
+  AP.push(ap);save();closeM('m-nova-ap');
+  ['na-c','na-s','na-n','na-p','na-f','na-o','na-r'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  renderCurrent();updateBadges();
+}
+
+// ================================================================
+// NOVA OPORTUNIDADE
+// ================================================================
+function salvarOp(){
+  const n2=document.getElementById('op-n').value.trim();if(!n2){alert('Preencha o nome.');return;}
+  const apId=Number(document.getElementById('op-id').value)||null;
+  if(apId&&PIPE.find(p=>p.ap_id===apId)){if(!confirm('Já existe oportunidade vinculada. Criar mesmo assim?'))return;}
+  PIPE.push({id:NID++,nome:n2,cliente:document.getElementById('op-c').value,valor:Number(document.getElementById('op-v').value)||0,
+    estagio:document.getElementById('op-e').value,data:document.getElementById('op-d').value,ap_id:apId,auto:false});
+  save();closeM('m-nova-op');renderPipe();updateBadges();
+}
+
+// ================================================================
+// BADGES
+// ================================================================
+function updateBadges(){
+  const inc=AP.filter(a=>a.inconsistente).length;
+  const urg=AP.filter(a=>{const d=dd(a.fim);return d>=0&&d<=30&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice)&&a.tipo!=='Vida';}).length+inc;
+  const pipe=PIPE.filter(p=>!['Renovada','Perdida'].includes(p.estagio)).length;
+  const sb=(id,v,show)=>{const el=document.getElementById(id);if(!el)return;el.textContent=v;el.style.display=show?'':'none';};
+  sb('nb-inc','!',inc>0);sb('nb-ap',urg,urg>0);sb('nb-urg',urg,urg>0);sb('nb-pipe',pipe,pipe>0);
+}
+
+// ================================================================
+// WHATSAPP
+// ================================================================
+function wpp(id){
+  const ap=AP.find(a=>a.id===id);if(!ap)return;
+  const d=dd(ap.fim);
+  const msg=`Olá, ${ap.cliente.split(' ')[0]}!\n\nPassando para avisar que sua apólice de *${ap.tipo}* (${ap.seguradora}) vence ${d<=0?'hoje':d===1?'amanhã':` em ${d} dias`} (${DT(ap.fim)}).\n\nGostaria de tratar a renovação? Estou disponível para apresentar as melhores opções.\n\nAguardo seu retorno!\n\n_Haus Seguros_`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ================================================================
+// EXPORT / IMPORT
+// ================================================================
+function exportCSV(){
+  const cols=['ID','Cliente','Tipo','Seguradora','Número','Prêmio','Vencimento','Status Apólice','Status Renovação','Alerta','Auto-renovável','Inconsistente','Próxima Ação','Data PA','Motivo Perda','Observação'];
+  const rows=AP.map(a=>[a.id,`"${a.cliente}"`,a.tipo,a.seguradora,a.numero||'',a.premio,a.fim,a.status_apolice,a.status_renovacao,a.alerta,a.renovacao_automatica?'Sim':'Não',a.inconsistente?'Sim':'Não',`"${a.proxima_acao||''}"`,a.data_proxima_acao||'',`"${a.motivo_perda||''}"`,`"${a.obs||''}"`].join(','));
+  dl('\ufeff'+[cols.join(','),...rows].join('\n'),'haus_apolices_'+today()+'.csv','text/csv;charset=utf-8');closeM('m-export');
+}
+function exportJSON(){
+  dl(JSON.stringify({exportado_em:new Date().toISOString(),versao:'4.0',apolices:AP,pipeline:PIPE},null,2),'haus_backup_'+today()+'.json','application/json');closeM('m-export');
+}
+function doImportClick(){document.getElementById('imp-file').click();}
+function doImport(evt){
+  const file=evt.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{const data=JSON.parse(e.target.result);if(!data.apolices){alert('Arquivo inválido.');return;}
+    if(!confirm(`Importar ${data.apolices.length} apólices?`))return;
+    AP=data.apolices;PIPE=data.pipeline||[];
+    NID=Math.max(...AP.map(a=>a.id),...PIPE.map(p=>p.id),300)+1;
+    migrate();save();closeM('m-export');runDaily(false);alert('Importação concluída!');}
+    catch(e2){alert('Erro: '+e2.message);}
+  };reader.readAsText(file);
+}
+function dl(c,n,t){const b=new Blob([c],{type:t});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);}
+
+// ================================================================
+// MODAIS
+// ================================================================
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeM(m.id);}));
+
+// ================================================================
+// INIT
+// ================================================================
+(async () => {
+  initSupabase();
+  await load();
+  runDaily(true);
+  goPage('dash');
+  document.getElementById('sync-ts').textContent = SB_OK
+    ? 'Supabase: conectado ✓'
+    : 'Offline: dados locais';
+  // Sincroniza com Supabase a cada 5 min se conectado
+  setInterval(async () => {
+    if (SB_OK && sb) {
+      try {
+        const { data } = await sb.from('haus_crm_state').select('updated_at').eq('id','main').single();
+        if (data) {
+          const remoteTs = new Date(data.updated_at).getTime();
+          const localTs = parseInt(localStorage.getItem('h4_remote_ts')||'0');
+          if (remoteTs > localTs) {
+            // Há dados mais novos no servidor — recarrega
+            await dbLoad();
+            runDaily(true);
+            renderCurrent();
+            updateBadges();
+            localStorage.setItem('h4_remote_ts', String(remoteTs));
+          }
+        }
+      } catch(e) {}
+    }
+    runDaily(true);
+  }, 300000);
+})();
+</script>
+
+<script>
+// PWA — Service Worker para funcionar offline e ser instalável
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // Service Worker inline via blob
+    const swCode = `
+const CACHE = 'haus-crm-v4';
+const ASSETS = [self.location.href.replace('sw.js',''), '/'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{}));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+    const clone = res.clone();
+    caches.open(CACHE).then(c => c.put(e.request, clone));
+    return res;
+  }).catch(() => caches.match(e.request))));
+});
+    `;
+    const blob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  });
+}
+
+// PWA install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Mostrar botão de instalação se disponível
+  const btn = document.getElementById('install-btn');
+  if (btn) { btn.style.display = ''; btn.onclick = () => { deferredPrompt.prompt(); deferredPrompt = null; btn.style.display = 'none'; }; }
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('install-btn');
+  if (btn) btn.style.display = 'none';
+});
+</script>
+</body>
+</html>
