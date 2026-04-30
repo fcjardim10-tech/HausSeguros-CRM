@@ -416,7 +416,7 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
 <div id="page-pipeline" class="page" style="display:none">
   <div class="ph">
     <div><div class="ptl">Pipeline de Renovações</div><div class="psb">Arraste os cards para atualizar — Vida excluída</div></div>
-    <div class="ha"><button class="btn btn-p" onclick="openM('m-nova-op')">+ Nova oportunidade</button></div>
+    <div class="ha"><button class="btn btn-p" onclick="openModalNovo()">+ Novo negócio</button></div>
   </div>
   <div class="pc">
     <div class="mg m4" id="pipe-m"></div>
@@ -501,17 +501,61 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
   </div>
 </div>
 
-<!-- MODAL NOVA OPORTUNIDADE -->
+<!-- MODAL NOVO NEGÓCIO -->
 <div class="mo" id="m-nova-op">
   <div class="mdl">
-    <div class="mh"><div><div class="mt">Nova oportunidade</div></div><button class="mx" onclick="closeM('m-nova-op')">✕</button></div>
+    <div class="mh">
+      <div>
+        <div class="mt" id="op-modal-title">Novo negócio</div>
+        <div class="msb" id="op-modal-sub">Card comercial no pipeline</div>
+      </div>
+      <button class="mx" onclick="closeM('m-nova-op')">✕</button>
+    </div>
     <div class="mb">
-      <div class="fr f"><div class="fg"><label class="fl">Nome</label><input class="fin" id="op-n" placeholder="Ex: Renovação RC — João Silva"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="op-c" placeholder="Nome"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="op-v" type="number" placeholder="0"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="op-e"><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option><option>Aguardando retorno</option></select></div><div class="fg"><label class="fl">Data limite</label><input class="fin" id="op-d" type="date"/></div></div>
-      <div class="fr f"><div class="fg"><label class="fl">ID da apólice vinculada</label><input class="fin" id="op-id" placeholder="ID numérico (opcional)"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Nome da oportunidade <span style="color:var(--r)">*</span></label><input class="fin" id="op-n" placeholder="Ex: RC Profissional — João Silva"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente <span style="color:var(--r)">*</span></label><input class="fin" id="op-c" placeholder="Nome do cliente"/></div><div class="fg"><label class="fl">Tipo</label><div style="display:flex;gap:6px;margin-top:2px"><button id="op-tipo-btn-ren" class="btn btn-sm" onclick="setOpTipo('renovacao')" style="flex:1">🔄 Renovação</button><button id="op-tipo-btn-nov" class="btn btn-sm btn-p" onclick="setOpTipo('novo_negocio')" style="flex:1">✨ Novo negócio</button></div></div></div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Produto</label>
+          <input class="fin" id="op-prod" list="op-prod-list" placeholder="Selecione ou digite"/>
+          <datalist id="op-prod-list">
+            <option value="RC Profissional"><option value="Empresarial"><option value="Automóvel">
+            <option value="Residencial"><option value="Vida"><option value="Saúde">
+            <option value="D&O"><option value="Garantia"><option value="Risco de Engenharia">
+            <option value="Fiança Locatícia"><option value="Equipamentos Portáteis">
+          </datalist>
+        </div>
+        <div class="fg"><label class="fl">Seguradora (opcional)</label><input class="fin" id="op-seg" placeholder="Ex: Porto Seguro"/></div>
+      </div>
+      <div class="fr"><div class="fg"><label class="fl">Valor estimado (R$)</label><input class="fin" id="op-v" type="number" placeholder="0"/></div><div class="fg"><label class="fl">Estágio</label><select class="fin" id="op-e"><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option><option>Aguardando retorno</option></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="op-pa" placeholder="Ex: Ligar, enviar proposta..."/></div><div class="fg"><label class="fl">Data da próxima ação</label><input class="fin" id="op-dpa" type="date"/></div></div>
+      <div id="op-bloco-ap" style="display:none">
+        <div style="background:var(--blb);border:1px solid var(--blbr);border-radius:var(--rr);padding:8px 10px;font-size:12px;color:var(--bl);margin-bottom:10px">🔗 Renovação: vinculada a uma apólice existente. Ao mover para "Renovada" ou "Perdida", a apólice será atualizada automaticamente.</div>
+        <div class="fr f"><div class="fg"><label class="fl">ID da apólice vinculada</label><input class="fin" id="op-id" placeholder="ID numérico da apólice (opcional)"/></div></div>
+      </div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="op-obs" placeholder="Notas, contexto..."/></div></div>
     </div>
     <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-nova-op')">Cancelar</button><button class="btn btn-p" onclick="salvarOp()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR CARD PIPELINE -->
+<div class="mo" id="m-edit-pipe">
+  <div class="mdl">
+    <div class="mh">
+      <div><div class="mt" id="ep-title">Editar oportunidade</div><div class="msb" id="ep-sub"></div></div>
+      <button class="mx" onclick="closeM('m-edit-pipe')">✕</button>
+    </div>
+    <div class="mb">
+      <div class="fr f"><div class="fg"><label class="fl">Nome</label><input class="fin" id="ep-n" placeholder="Nome da oportunidade"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="ep-c" placeholder="Nome"/></div><div class="fg"><label class="fl">Produto</label><input class="fin" id="ep-prod" list="ep-prod-list" placeholder="Produto"/><datalist id="ep-prod-list"><option value="RC Profissional"><option value="Empresarial"><option value="Automóvel"><option value="Residencial"><option value="Vida"><option value="Saúde"><option value="D&O"><option value="Garantia"><option value="Risco de Engenharia"></datalist></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="ep-seg" placeholder="Seguradora"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="ep-v" type="number" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="ep-e"><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option><option>Aguardando retorno</option><option>Renovada</option><option>Perdida</option></select></div><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="ep-pa" placeholder="Próxima ação"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Data próxima ação</label><input class="fin" id="ep-dpa" type="date"/></div><div class="fg"><label class="fl">Observações</label><input class="fin" id="ep-obs" placeholder="Notas..."/></div></div>
+    </div>
+    <div class="mf">
+      <div class="mfl"><button class="btn btn-d btn-sm" onclick="excluirCard()">🗑 Excluir</button></div>
+      <div class="mfr"><button class="btn" onclick="closeM('m-edit-pipe')">Cancelar</button><button class="btn btn-p" onclick="salvarEditCard()">Salvar</button></div>
+    </div>
   </div>
 </div>
 
@@ -749,6 +793,15 @@ function migrate(){
     if(!ap.ultima_interacao)ap.ultima_interacao='';
     if(!ap.historico)ap.historico=[];
     if(!ap.motivo_perda)ap.motivo_perda='';
+  });
+  PIPE.forEach(p=>{
+    if(!p.tipo_oportunidade)p.tipo_oportunidade=p.ap_id?'renovacao':'novo_negocio';
+    if(p.produto===undefined)p.produto='';
+    if(p.seguradora===undefined)p.seguradora='';
+    if(p.proxima_acao===undefined)p.proxima_acao='';
+    if(p.data_proxima_acao===undefined)p.data_proxima_acao='';
+    if(p.obs===undefined)p.obs='';
+    if(!p.historico_pipe)p.historico_pipe=[];
   });
 }
 function initBase(){
@@ -1160,12 +1213,18 @@ function renderPipe(){
   `;
   const board=document.getElementById('pipe-board');
   board.innerHTML=ESTAGIOS.map(est=>{
-    // ordenar cards por urgência (vencimento)
+    // Ordenar: renovações por urgência primeiro, depois novos negócios
     const cards=PIPE.filter(p=>p.estagio===est).sort((a,b)=>{
-      const da=AP.find(x=>x.id===a.ap_id),db=AP.find(x=>x.id===b.ap_id);
-      const fa=da?urgFaixa(da).faixa:6,fb=db?urgFaixa(db).faixa:6;
-      if(fa!==fb)return fa-fb;
-      return(da?dd(da.fim):9999)-(db?dd(db.fim):9999);
+      const isRenA=a.tipo_oportunidade==='renovacao', isRenB=b.tipo_oportunidade==='renovacao';
+      if(isRenA&&!isRenB) return -1;
+      if(!isRenA&&isRenB) return 1;
+      if(isRenA&&isRenB){
+        const da=AP.find(x=>x.id===a.ap_id),db=AP.find(x=>x.id===b.ap_id);
+        const fa=da?urgFaixa(da).faixa:6,fb=db?urgFaixa(db).faixa:6;
+        if(fa!==fb) return fa-fb;
+        return (da?dd(da.fim):9999)-(db?dd(db.fim):9999);
+      }
+      return 0;
     });
     const tot=cards.reduce((s,c)=>s+Number(c.valor||0),0);
     const isW=est==='Renovada',isL=est==='Perdida';
@@ -1175,24 +1234,39 @@ function renderPipe(){
       <div class="phd"><span class="pnm">${est}</span><span class="pcnt">${cards.length}</span></div>
       <div class="ptot">${R(tot)}</div>
       ${cards.map(c=>{
-        const ap=AP.find(a=>a.id===c.ap_id);
+        const isRen=c.tipo_oportunidade==='renovacao';
+        const ap=isRen?AP.find(a=>a.id===c.ap_id):null;
         const d=ap?dd(ap.fim):9999;
         const dc=d<0?'color:var(--r)':d<=7?'color:var(--r)':d<=30?'color:var(--r)':d<=60?'color:var(--a)':'color:var(--tx3)';
         const urgCls=d<=7?'pcard urgent':d<=30?'pcard warn':'pcard';
-        const dLbl=d===9999?'—':d<0?Math.abs(d)+'d atrás':d===0?'Hoje':d+'d';
-        return`<div class="${urgCls}" draggable="true" data-cid="${c.id}" data-apid="${c.ap_id||0}"
+        const dLbl=d===9999?'':d<0?Math.abs(d)+'d atrás':d===0?'Hoje':d+'d';
+        // Badge tipo
+        const tipoBdg=isRen
+          ?`<span style="font-size:9px;background:var(--blb);color:var(--bl);border:1px solid var(--blbr);padding:0 5px;border-radius:3px;font-weight:600">RENOVAÇÃO</span>`
+          :`<span style="font-size:9px;background:#F0FBF7;color:var(--tl);border:1px solid var(--tlbr);padding:0 5px;border-radius:3px;font-weight:600">NOVO NEGÓCIO</span>`;
+        // FU badge
+        let fuLbl='';
+        if(c.data_proxima_acao){const df=dd(c.data_proxima_acao);fuLbl=`<div style="font-size:10px;margin-top:3px;color:${df<0?'var(--r)':df===0?'var(--r)':df<=3?'var(--a)':'var(--tx3)'}">${df<0?'FU: '+Math.abs(df)+'d atraso':df===0?'FU: Hoje':df<=3?'FU: '+df+'d':''}</div>`;}
+        return`<div class="${urgCls}" draggable="true" data-cid="${c.id}"
             ondragstart="onDS(event)" ondragend="onDE(event)">
-          <div class="pc-n">${c.cliente.split(' ').slice(0,3).join(' ')}</div>
-          <div class="pc-tp">${tipoBadge(ap?ap.tipo:c.nome.split(' ')[1]||'')}</div>
-          <div class="pc-row">
-            <span class="pc-val">${c.valor>0?R(c.valor):'—'}</span>
-            <span class="pc-dias" style="${dc}">${dLbl}</span>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+            <div style="flex:1;min-width:0">${tipoBdg}</div>
+            <button onclick="event.stopPropagation();abrirEditCard(${c.id})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;padding:0 0 0 4px;flex-shrink:0" title="Editar">✏</button>
           </div>
+          <div class="pc-n">${c.cliente}</div>
+          <div class="pc-tp">${c.produto||c.nome.split('—').pop().trim()}</div>
+          ${c.seguradora?`<div style="font-size:10px;color:var(--tx3)">${c.seguradora}</div>`:''}
+          <div class="pc-row" style="margin-top:5px">
+            <span class="pc-val">${c.valor>0?R(c.valor):'—'}</span>
+            ${isRen&&d<9999?`<span class="pc-dias" style="${dc}">${dLbl}</span>`:''}
+          </div>
+          ${fuLbl}
         </div>`;
       }).join('')}
     </div>`;
   }).join('');
 }
+
 function onDS(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',e.currentTarget.dataset.cid);}
 function onDE(e){e.currentTarget.classList.remove('dragging');document.querySelectorAll('.pipe-col').forEach(c=>c.classList.remove('dov','dov-w','dov-l'));}
 function onDO(e,col){e.preventDefault();const est=col.dataset.est;col.classList.remove('dov','dov-w','dov-l');col.classList.add(est==='Renovada'?'dov-w':est==='Perdida'?'dov-l':'dov');}
@@ -1204,28 +1278,15 @@ function onDP(e,col,novoEst){
   if(!card||card.estagio===novoEst)return;
   const antEst=card.estagio;
   card.estagio=novoEst;
-  if(card.ap_id){
-    const ap=AP.find(a=>a.id===card.ap_id);
-    if(ap){
-      const ts=new Date().toISOString();
-      ap.historico=ap.historico||[];
-      ap.historico.push({data:ts,de:ap.status_renovacao,para:novoEst,tipo:'pipeline',motivo:`Pipeline: ${antEst} → ${novoEst}`});
-      ap.status_renovacao=novoEst;
-      if(novoEst==='Renovada'){ap.status_apolice='Renovada';ap.alerta='Renovada';ap.bloquear_automacao=true;ap.data_renovacao=today();}
-      else if(novoEst==='Perdida'){
-        ap.status_apolice='Perdida';ap.alerta='Perdida';ap.bloquear_automacao=true;
-        const mt=prompt('Motivo da perda (opcional):\n'+MOTIVOS_PERDA.map((m,i)=>`${i+1}. ${m}`).join('\n')||'');
-        if(mt)ap.motivo_perda=mt;
-      }
-      ap.ts=ts;
-    }
+  card.historico_pipe=card.historico_pipe||[];
+  card.historico_pipe.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'drag'});
+  card.ts=new Date().toISOString();
+  if((card.tipo_oportunidade||'renovacao')==='renovacao'&&card.ap_id){
+    syncApoliceFromPipe(card,antEst,novoEst);
   }
   save();renderPipe();updateBadges();
 }
 
-// ================================================================
-// ANALYTICS
-// ================================================================
 function renderAnalytics(){
   const at=AP.filter(a=>['Ativa','Vencendo','Urgente'].includes(a.status_apolice));
   const rv=AP.filter(a=>a.status_apolice==='Renovada');
@@ -1358,29 +1419,146 @@ function salvarNovaAp(){
 // ================================================================
 // NOVA OPORTUNIDADE
 // ================================================================
-function salvarOp(){
-  const n2=document.getElementById('op-n').value.trim();if(!n2){alert('Preencha o nome.');return;}
-  const apId=Number(document.getElementById('op-id').value)||null;
-  if(apId&&PIPE.find(p=>p.ap_id===apId)){if(!confirm('Já existe oportunidade vinculada. Criar mesmo assim?'))return;}
-  PIPE.push({id:NID++,nome:n2,cliente:document.getElementById('op-c').value,valor:Number(document.getElementById('op-v').value)||0,
-    estagio:document.getElementById('op-e').value,data:document.getElementById('op-d').value,ap_id:apId,auto:false});
-  save();closeM('m-nova-op');renderPipe();updateBadges();
+// ── PIPELINE: estado de edição e tipo ───────────────────────────────────────
+let opTipo = 'novo_negocio'; // 'renovacao' | 'novo_negocio'
+let editPipeId = null;
+
+function setOpTipo(tipo) {
+  opTipo = tipo;
+  const btnRen = document.getElementById('op-tipo-btn-ren');
+  const btnNov = document.getElementById('op-tipo-btn-nov');
+  const blocoAp = document.getElementById('op-bloco-ap');
+  if (tipo === 'renovacao') {
+    btnRen.className = 'btn btn-sm btn-p'; btnNov.className = 'btn btn-sm';
+    blocoAp.style.display = '';
+  } else {
+    btnNov.className = 'btn btn-sm btn-p'; btnRen.className = 'btn btn-sm';
+    blocoAp.style.display = 'none';
+  }
 }
 
-// ================================================================
-// BADGES
-// ================================================================
-function updateBadges(){
-  const inc=AP.filter(a=>a.inconsistente).length;
-  const urg=AP.filter(a=>{const d=dd(a.fim);return d>=0&&d<=30&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice)&&a.tipo!=='Vida';}).length+inc;
-  const pipe=PIPE.filter(p=>!['Renovada','Perdida'].includes(p.estagio)).length;
-  const sb=(id,v,show)=>{const el=document.getElementById(id);if(!el)return;el.textContent=v;el.style.display=show?'':'none';};
-  sb('nb-inc','!',inc>0);sb('nb-ap',urg,urg>0);sb('nb-urg',urg,urg>0);sb('nb-pipe',pipe,pipe>0);
+function openModalNovo() {
+  // Limpar campos
+  ['op-n','op-c','op-prod','op-seg','op-v','op-pa','op-dpa','op-obs','op-id'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('op-e').value = 'Identificada';
+  document.getElementById('op-modal-title').textContent = 'Novo negócio';
+  document.getElementById('op-modal-sub').textContent = 'Card comercial no pipeline';
+  setOpTipo('novo_negocio');
+  openM('m-nova-op');
 }
 
-// ================================================================
-// WHATSAPP
-// ================================================================
+function salvarOp() {
+  const nome = document.getElementById('op-n').value.trim();
+  const cliente = document.getElementById('op-c').value.trim();
+  if (!nome) { alert('Preencha o nome da oportunidade.'); return; }
+  if (!cliente) { alert('Preencha o cliente.'); return; }
+
+  const apId = opTipo === 'renovacao' ? (Number(document.getElementById('op-id').value) || null) : null;
+
+  // Anti-duplicação só para renovações com apólice vinculada
+  if (apId && PIPE.find(p => p.ap_id === apId && !['Renovada','Perdida'].includes(p.estagio))) {
+    if (!confirm('Já existe oportunidade ativa vinculada a esta apólice. Criar mesmo assim?')) return;
+  }
+
+  const card = {
+    id: NID++,
+    nome,
+    cliente,
+    produto: document.getElementById('op-prod').value || '',
+    seguradora: document.getElementById('op-seg').value || '',
+    valor: Number(document.getElementById('op-v').value) || 0,
+    estagio: document.getElementById('op-e').value,
+    proxima_acao: document.getElementById('op-pa').value || '',
+    data_proxima_acao: document.getElementById('op-dpa').value || '',
+    obs: document.getElementById('op-obs').value || '',
+    tipo_oportunidade: opTipo,
+    ap_id: apId,
+    auto: false,
+    historico_pipe: [],
+    ts: new Date().toISOString()
+  };
+  PIPE.push(card);
+  save();
+  closeM('m-nova-op');
+  renderPipe();
+  updateBadges();
+}
+
+function abrirEditCard(cid) {
+  editPipeId = cid;
+  const c = PIPE.find(p => p.id === cid); if (!c) return;
+  document.getElementById('ep-title').textContent = c.tipo_oportunidade === 'novo_negocio' ? 'Editar negócio' : 'Editar renovação';
+  document.getElementById('ep-sub').textContent = c.cliente;
+  document.getElementById('ep-n').value = c.nome || '';
+  document.getElementById('ep-c').value = c.cliente || '';
+  document.getElementById('ep-prod').value = c.produto || '';
+  document.getElementById('ep-seg').value = c.seguradora || '';
+  document.getElementById('ep-v').value = c.valor || '';
+  document.getElementById('ep-e').value = c.estagio || 'Identificada';
+  document.getElementById('ep-pa').value = c.proxima_acao || '';
+  document.getElementById('ep-dpa').value = c.data_proxima_acao || '';
+  document.getElementById('ep-obs').value = c.obs || '';
+  openM('m-edit-pipe');
+}
+
+function salvarEditCard() {
+  const c = PIPE.find(p => p.id === editPipeId); if (!c) return;
+  const novoEst = document.getElementById('ep-e').value;
+  const antEst = c.estagio;
+  c.nome = document.getElementById('ep-n').value.trim() || c.nome;
+  c.cliente = document.getElementById('ep-c').value.trim() || c.cliente;
+  c.produto = document.getElementById('ep-prod').value;
+  c.seguradora = document.getElementById('ep-seg').value;
+  c.valor = Number(document.getElementById('ep-v').value) || 0;
+  c.estagio = novoEst;
+  c.proxima_acao = document.getElementById('ep-pa').value;
+  c.data_proxima_acao = document.getElementById('ep-dpa').value;
+  c.obs = document.getElementById('ep-obs').value;
+  c.ts = new Date().toISOString();
+  if (novoEst !== antEst) {
+    c.historico_pipe = c.historico_pipe || [];
+    c.historico_pipe.push({ data: new Date().toISOString(), de: antEst, para: novoEst, tipo: 'manual' });
+    // Sync apólice só se for renovação
+    if (c.tipo_oportunidade === 'renovacao' && c.ap_id) {
+      syncApoliceFromPipe(c, antEst, novoEst);
+    }
+  }
+  save(); closeM('m-edit-pipe'); renderPipe(); updateBadges();
+}
+
+function excluirCard() {
+  const c = PIPE.find(p => p.id === editPipeId); if (!c) return;
+  const label = c.tipo_oportunidade === 'novo_negocio' ? 'negócio' : 'renovação';
+  const msg = c.tipo_oportunidade === 'renovacao'
+    ? `Excluir esta renovação do pipeline?\nA apólice de ${c.cliente} NÃO será alterada.`
+    : `Excluir o negócio "${c.nome}"?`;
+  if (!confirm(msg)) return;
+  PIPE.splice(PIPE.findIndex(p => p.id === editPipeId), 1);
+  save(); closeM('m-edit-pipe'); renderPipe(); updateBadges();
+}
+
+function syncApoliceFromPipe(card, antEst, novoEst) {
+  if (!card.ap_id) return;
+  const ap = AP.find(a => a.id === card.ap_id); if (!ap) return;
+  const ts = new Date().toISOString();
+  ap.historico = ap.historico || [];
+  ap.historico.push({ data: ts, de: ap.status_renovacao, para: novoEst, tipo: 'pipeline', motivo: `Pipeline: ${antEst} → ${novoEst}` });
+  ap.status_renovacao = novoEst;
+  if (novoEst === 'Renovada') {
+    ap.status_apolice = 'Renovada'; ap.alerta = 'Renovada';
+    ap.bloquear_automacao = true; ap.data_renovacao = today();
+  } else if (novoEst === 'Perdida') {
+    ap.status_apolice = 'Perdida'; ap.alerta = 'Perdida';
+    ap.bloquear_automacao = true;
+    const mt = prompt('Motivo da perda (opcional):\n' + MOTIVOS_PERDA.map((m,i) => `${i+1}. ${m}`).join('\n') || '');
+    if (mt) ap.motivo_perda = mt;
+  }
+  ap.ts = ts;
+}
+
+
 function wpp(id){
   const ap=AP.find(a=>a.id===id);if(!ap)return;
   const d=dd(ap.fim);
