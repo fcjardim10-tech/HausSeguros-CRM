@@ -270,6 +270,21 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
   .m5,.m4{grid-template-columns:repeat(2,1fr)}
   .cg{grid-template-columns:1fr}.pv-g{grid-template-columns:repeat(2,1fr)}
 }
+
+/* Pipeline tabs */
+.pipe-tabs{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--bd)}
+.pipe-tab{padding:8px 18px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--tx3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--fn);transition:all .12s}
+.pipe-tab:hover{color:var(--tx)}
+.pipe-tab.on{color:var(--tx);border-bottom-color:var(--tx)}
+/* Sinistro card */
+.sin-card{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rr);padding:9px 10px;margin-bottom:5px;cursor:grab;transition:all .15s;user-select:none}
+.sin-card:hover{background:var(--sf);box-shadow:var(--sh)}
+.sin-card.dragging{opacity:.35;cursor:grabbing}
+.sin-card.urgente-sin{border-left:2px solid var(--pu)}
+/* Badge sinistro */
+.b-sin{background:var(--pub);color:var(--pu);border-color:var(--pubr);font-size:9px;padding:0 5px;border-radius:3px;font-weight:600}
+/* Próximo ciclo */
+.ciclo-banner{background:var(--blb);border:1px solid var(--blbr);border-radius:var(--rr);padding:9px 12px;margin-bottom:10px;font-size:12px;color:var(--bl);display:flex;align-items:center;justify-content:space-between;gap:8px}
 </style>
 </head>
 <body>
@@ -286,7 +301,9 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
     <div class="ni" onclick="goPage('apolices')" id="nav-apolices"><span class="nicon">◫</span>Apólices<span class="nb" id="nb-ap" style="display:none">0</span></div>
     <div class="ni" onclick="goPage('urgentes')" id="nav-urgentes"><span class="nicon">◉</span>Urgentes<span class="nb" id="nb-urg" style="display:none">0</span></div>
     <div class="ns">Comercial</div>
-    <div class="ni" onclick="goPage('pipeline')" id="nav-pipeline"><span class="nicon">⟶</span>Pipeline<span class="nb a" id="nb-pipe" style="display:none">0</span></div>
+    <div class="ni" onclick="goPage('pipeline')" id="nav-pipeline"><span class="nicon">⟶</span>Renovações<span class="nb a" id="nb-pipe" style="display:none">0</span></div>
+    <div class="ni" onclick="goPage('novos')" id="nav-novos"><span class="nicon">✨</span>Novos negócios<span class="nb a" id="nb-novos" style="display:none">0</span></div>
+    <div class="ni" onclick="goPage('sinistros')" id="nav-sinistros"><span class="nicon">⚠</span>Sinistros<span class="nb" id="nb-sin" style="display:none">0</span></div>
     <div class="ns">Análise</div>
     <div class="ni" onclick="goPage('analytics')" id="nav-analytics"><span class="nicon">◈</span>Analytics</div>
   </nav>
@@ -416,7 +433,7 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
 <div id="page-pipeline" class="page" style="display:none">
   <div class="ph">
     <div><div class="ptl">Pipeline de Renovações</div><div class="psb">Arraste os cards para atualizar — Vida excluída</div></div>
-    <div class="ha"><button class="btn btn-p" onclick="openModalNovo()">+ Novo negócio</button></div>
+    <div class="ha"><button class="btn btn-p" onclick="openModalNovo()">+ Nova renovação</button></div>
   </div>
   <div class="pc">
     <div class="mg m4" id="pipe-m"></div>
@@ -435,6 +452,31 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
       <div class="cc"><div class="ct">Vencimentos por mês</div><div id="ch-mes"></div></div>
       <div class="cc"><div class="ct">Status da carteira</div><div id="ch-st"></div></div>
     </div>
+  </div>
+</div>
+
+
+<!-- PAGE NOVOS NEGÓCIOS -->
+<div id="page-novos" class="page" style="display:none">
+  <div class="ph">
+    <div><div class="ptl">Novos Negócios</div><div class="psb">Pipeline comercial de prospecção e vendas</div></div>
+    <div class="ha"><button class="btn btn-p" onclick="openModalNovoNegocio()">+ Novo negócio</button></div>
+  </div>
+  <div class="pc">
+    <div class="mg m4" id="novos-m"></div>
+    <div class="pipe-wrap"><div class="pipe-board" id="novos-board"></div></div>
+  </div>
+</div>
+
+<!-- PAGE SINISTROS -->
+<div id="page-sinistros" class="page" style="display:none">
+  <div class="ph">
+    <div><div class="ptl">Sinistros</div><div class="psb">Acompanhamento de sinistros da carteira</div></div>
+    <div class="ha"><button class="btn btn-p" onclick="openModalNovoSinistro()">+ Novo sinistro</button></div>
+  </div>
+  <div class="pc">
+    <div class="mg m4" id="sin-m"></div>
+    <div class="pipe-wrap"><div class="pipe-board" id="sin-board"></div></div>
   </div>
 </div>
 
@@ -494,12 +536,14 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
     <div class="mf">
       <div class="mfl">
         <button class="btn btn-d btn-sm" id="btn-reset" onclick="resetAuto()" style="display:none">↻ Reset automação</button>
+        <button class="btn btn-sm" id="btn-ciclo" onclick="closeM('m-status');abrirProximoCiclo(editId)" style="display:none">🔄 Gerar próximo ciclo</button>
         <span id="blk-info" style="font-size:11px;color:var(--tx3);align-self:center"></span>
       </div>
       <div class="mfr"><button class="btn" onclick="closeM('m-status')">Cancelar</button><button class="btn btn-p" onclick="salvarStatus()">Salvar</button></div>
     </div>
   </div>
 </div>
+
 
 <!-- MODAL NOVO NEGÓCIO -->
 <div class="mo" id="m-nova-op">
@@ -552,10 +596,134 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
       <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="ep-e"><option>Identificada</option><option>Contato feito</option><option>Proposta enviada</option><option>Em negociação</option><option>Aguardando retorno</option><option>Renovada</option><option>Perdida</option></select></div><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="ep-pa" placeholder="Próxima ação"/></div></div>
       <div class="fr"><div class="fg"><label class="fl">Data próxima ação</label><input class="fin" id="ep-dpa" type="date"/></div><div class="fg"><label class="fl">Observações</label><input class="fin" id="ep-obs" placeholder="Notas..."/></div></div>
     </div>
-    <div class="mf">
+          <div class="fr f" style="margin-top:10px"><div class="fg">
+        <label class="fl" style="color:var(--bl)">Mover para outro pipeline (opcional)</label>
+        <select class="fin" id="ep-mover" style="border-color:var(--blbr);background:var(--blb)">
+          <option value="">— Manter em Renovações —</option>
+          <option value="novos">✨ Novos Negócios</option>
+          <option value="sinistros">⚠ Sinistros</option>
+        </select>
+      </div></div>
+<div class="mf">
       <div class="mfl"><button class="btn btn-d btn-sm" onclick="excluirCard()">🗑 Excluir</button></div>
       <div class="mfr"><button class="btn" onclick="closeM('m-edit-pipe')">Cancelar</button><button class="btn btn-p" onclick="salvarEditCard()">Salvar</button></div>
     </div>
+  </div>
+</div>
+
+
+<!-- MODAL NOVO NEGÓCIO (pipeline próprio) -->
+<div class="mo" id="m-novo-neg">
+  <div class="mdl">
+    <div class="mh"><div><div class="mt">Novo negócio</div><div class="msb">Card comercial — não cria apólice</div></div><button class="mx" onclick="closeM('m-novo-neg')">✕</button></div>
+    <div class="mb">
+      <div class="fr f"><div class="fg"><label class="fl">Nome da oportunidade *</label><input class="fin" id="nn-nome" placeholder="Ex: RC Profissional — Empresa XYZ"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente *</label><input class="fin" id="nn-cli" placeholder="Nome do cliente"/></div><div class="fg"><label class="fl">Produto</label><input class="fin" id="nn-prod" list="nn-prod-list" placeholder="Selecione ou digite"/><datalist id="nn-prod-list"><option value="RC Profissional"><option value="Empresarial"><option value="Automóvel"><option value="Residencial"><option value="Vida"><option value="Saúde"><option value="D&O"><option value="Garantia"><option value="Risco de Engenharia"><option value="Fiança Locatícia"></datalist></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="nn-seg" placeholder="Opcional"/></div><div class="fg"><label class="fl">Valor estimado (R$)</label><input class="fin" id="nn-val" type="number" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="nn-est"><option>Lead identificado</option><option>Contato feito</option><option>Cotação em andamento</option><option>Proposta enviada</option><option>Em negociação</option><option>Fechado</option><option>Perdido</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="nn-resp" placeholder="Assessor"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="nn-pa" placeholder="Ex: Enviar proposta"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="nn-dpa" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="nn-obs" placeholder="Contexto, notas..."/></div></div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-novo-neg')">Cancelar</button><button class="btn btn-p" onclick="salvarNovoNeg()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR NOVO NEGÓCIO -->
+<div class="mo" id="m-edit-neg">
+  <div class="mdl">
+    <div class="mh"><div><div class="mt" id="en-title">Editar negócio</div><div class="msb" id="en-sub"></div></div><button class="mx" onclick="closeM('m-edit-neg')">✕</button></div>
+    <div class="mb">
+      <div id="en-ciclo-banner" class="ciclo-banner" style="display:none">
+        <span>✅ Negócio fechado — deseja transformar em apólice?</span>
+        <button class="btn btn-sm btn-p" onclick="converterEmApolice()">Transformar em apólice</button>
+      </div>
+      <div class="fr f"><div class="fg"><label class="fl">Nome</label><input class="fin" id="en-nome" placeholder="Nome"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="en-cli" placeholder="Nome"/></div><div class="fg"><label class="fl">Produto</label><input class="fin" id="en-prod" list="en-prod-list" placeholder="Produto"/><datalist id="en-prod-list"><option value="RC Profissional"><option value="Empresarial"><option value="Automóvel"><option value="Residencial"><option value="Vida"><option value="Saúde"><option value="D&O"><option value="Garantia"></datalist></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="en-seg" placeholder="Seguradora"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="en-val" type="number" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="en-est"><option>Lead identificado</option><option>Contato feito</option><option>Cotação em andamento</option><option>Proposta enviada</option><option>Em negociação</option><option>Fechado</option><option>Perdido</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="en-resp" placeholder="Assessor"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="en-pa" placeholder="Próxima ação"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="en-dpa" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="en-obs" placeholder="Notas..."/></div></div>
+    </div>
+          <div class="fr f" style="margin-top:10px"><div class="fg">
+        <label class="fl" style="color:var(--bl)">Mover para outro pipeline (opcional)</label>
+        <select class="fin" id="en-mover" style="border-color:var(--blbr);background:var(--blb)">
+          <option value="">— Manter em Novos Negócios —</option>
+          <option value="pipeline">🔄 Renovações</option>
+          <option value="sinistros">⚠ Sinistros</option>
+        </select>
+      </div></div>
+<div class="mf"><div class="mfl"><button class="btn btn-d btn-sm" onclick="excluirNeg()">🗑 Excluir</button></div><div class="mfr"><button class="btn" onclick="closeM('m-edit-neg')">Cancelar</button><button class="btn btn-p" onclick="salvarEditNeg()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL CONVERTER EM APÓLICE -->
+<div class="mo" id="m-conv-ap">
+  <div class="mdl">
+    <div class="mh"><div><div class="mt">Transformar em apólice</div><div class="msb">Negócio fechado → carteira de apólices</div></div><button class="mx" onclick="closeM('m-conv-ap')">✕</button></div>
+    <div class="mb">
+      <div style="background:var(--gb);border:1px solid var(--gbr);border-radius:var(--rr);padding:9px 12px;font-size:12px;color:var(--g);margin-bottom:12px">✅ Após confirmar, uma nova apólice será criada na carteira com status Ativa.</div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="cv-cli" placeholder="Nome"/></div><div class="fg"><label class="fl">Tipo/Produto</label><input class="fin" id="cv-tipo" list="cv-tipo-list" placeholder="Tipo"/><datalist id="cv-tipo-list"><option value="RC Profissional"><option value="Empresarial"><option value="Automóvel"><option value="Residencial"><option value="Vida"><option value="Saúde"></datalist></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="cv-seg" placeholder="Seguradora"/></div><div class="fg"><label class="fl">Nº Apólice</label><input class="fin" id="cv-num" placeholder="Número (se já tiver)"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Prêmio (R$)</label><input class="fin" id="cv-pre" type="number" placeholder="0"/></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="cv-resp" placeholder="Assessor"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Data início</label><input class="fin" id="cv-ini" type="date"/></div><div class="fg"><label class="fl">Data vencimento *</label><input class="fin" id="cv-fim" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="cv-obs" placeholder="Notas..."/></div></div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-conv-ap')">Cancelar</button><button class="btn btn-p" onclick="confirmarConversao()">Criar apólice</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL NOVO SINISTRO -->
+<div class="mo" id="m-novo-sin">
+  <div class="mdl mdl-lg">
+    <div class="mh"><div><div class="mt">Novo sinistro</div><div class="msb">Registro de sinistro da carteira</div></div><button class="mx" onclick="closeM('m-novo-sin')">✕</button></div>
+    <div class="mb">
+      <div class="fr"><div class="fg"><label class="fl">Cliente *</label><input class="fin" id="ns-cli" placeholder="Nome do cliente"/></div><div class="fg"><label class="fl">Produto/Tipo</label><input class="fin" id="ns-prod" list="ns-prod-list" placeholder="Tipo de seguro"/><datalist id="ns-prod-list"><option value="RC Profissional"><option value="Empresarial"><option value="Automóvel"><option value="Residencial"><option value="Vida"><option value="Saúde"></datalist></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="ns-seg" placeholder="Seguradora"/></div><div class="fg"><label class="fl">Nº do sinistro</label><input class="fin" id="ns-num" placeholder="Número"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Data do aviso</label><input class="fin" id="ns-data" type="date"/></div><div class="fg"><label class="fl">Valor estimado (R$)</label><input class="fin" id="ns-val" type="number" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="ns-est"><option>Avisado</option><option>Documentação pendente</option><option>Em análise</option><option>Exigência da seguradora</option><option>Regulação</option><option>Indenizado</option><option>Negado</option><option>Encerrado</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="ns-resp" placeholder="Assessor"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="ns-pa" placeholder="Ex: Cobrar documentos"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="ns-dpa" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="ns-obs" placeholder="Descrição do sinistro, contexto..."/></div></div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-novo-sin')">Cancelar</button><button class="btn btn-p" onclick="salvarNovoSin()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR SINISTRO -->
+<div class="mo" id="m-edit-sin">
+  <div class="mdl mdl-lg">
+    <div class="mh"><div><div class="mt">Editar sinistro</div><div class="msb" id="es-sub"></div></div><button class="mx" onclick="closeM('m-edit-sin')">✕</button></div>
+    <div class="mb">
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="es-cli" placeholder="Nome"/></div><div class="fg"><label class="fl">Produto</label><input class="fin" id="es-prod" list="es-prod-list" placeholder="Tipo"/><datalist id="es-prod-list"><option value="RC Profissional"><option value="Empresarial"><option value="Automóvel"><option value="Residencial"><option value="Vida"><option value="Saúde"></datalist></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="es-seg" placeholder="Seguradora"/></div><div class="fg"><label class="fl">Nº sinistro</label><input class="fin" id="es-num" placeholder="Número"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Data aviso</label><input class="fin" id="es-data" type="date"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="es-val" type="number" placeholder="0"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="es-est"><option>Avisado</option><option>Documentação pendente</option><option>Em análise</option><option>Exigência da seguradora</option><option>Regulação</option><option>Indenizado</option><option>Negado</option><option>Encerrado</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="es-resp" placeholder="Assessor"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="es-pa" placeholder="Próxima ação"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="es-dpa" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="es-obs" placeholder="Notas..."/></div></div>
+    </div>
+          <div class="fr f" style="margin-top:10px"><div class="fg">
+        <label class="fl" style="color:var(--bl)">Mover para outro pipeline (opcional)</label>
+        <select class="fin" id="es-mover" style="border-color:var(--blbr);background:var(--blb)">
+          <option value="">— Manter em Sinistros —</option>
+          <option value="pipeline">🔄 Renovações</option>
+          <option value="novos">✨ Novos Negócios</option>
+        </select>
+      </div></div>
+<div class="mf"><div class="mfl"><button class="btn btn-d btn-sm" onclick="excluirSin()">🗑 Excluir</button></div><div class="mfr"><button class="btn" onclick="closeM('m-edit-sin')">Cancelar</button><button class="btn btn-p" onclick="salvarEditSin()">Salvar</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL PRÓXIMO CICLO (apólice renovada) -->
+<div class="mo" id="m-ciclo">
+  <div class="mdl">
+    <div class="mh"><div><div class="mt">Gerar próximo ciclo</div><div class="msb">Nova apólice para o ano seguinte</div></div><button class="mx" onclick="closeM('m-ciclo')">✕</button></div>
+    <div class="mb">
+      <div style="background:var(--blb);border:1px solid var(--blbr);border-radius:var(--rr);padding:9px 12px;font-size:12px;color:var(--bl);margin-bottom:12px">Uma nova apólice será criada com vencimento +1 ano, status Ativa e renovação Não iniciada.</div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="ci-cli" readonly/></div><div class="fg"><label class="fl">Tipo</label><input class="fin" id="ci-tipo" readonly/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="ci-seg" readonly/></div><div class="fg"><label class="fl">Prêmio (R$)</label><input class="fin" id="ci-pre" type="number" placeholder="Confirme o prêmio"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Novo vencimento</label><input class="fin" id="ci-fim" type="date"/></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="ci-resp" placeholder="Assessor"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="ci-obs" placeholder="Notas do novo ciclo..."/></div></div>
+    </div>
+    <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-ciclo')">Cancelar</button><button class="btn btn-p" onclick="confirmarCiclo()">Criar próximo ciclo</button></div></div>
   </div>
 </div>
 
@@ -609,6 +777,8 @@ async function dbSave() {
   try {
     localStorage.setItem('h4_ap', JSON.stringify(AP));
     localStorage.setItem('h4_pi', JSON.stringify(PIPE));
+    localStorage.setItem('h4_ng', JSON.stringify(NEGS));
+    localStorage.setItem('h4_si', JSON.stringify(SINS));
     localStorage.setItem('h4_ni', String(NID));
   } catch(e) {}
 
@@ -619,6 +789,8 @@ async function dbSave() {
       id: 'main',
       apolices: AP,
       pipeline: PIPE,
+      negs: NEGS,
+      sins: SINS,
       next_id: NID,
       updated_at: new Date().toISOString()
     }, { onConflict: 'id' });
@@ -638,9 +810,13 @@ async function dbLoad() {
     try {
       const a = localStorage.getItem('h4_ap');
       const p = localStorage.getItem('h4_pi');
+      const ng= localStorage.getItem('h4_ng');
+      const si= localStorage.getItem('h4_si');
       const n = localStorage.getItem('h4_ni');
       if (a) AP = JSON.parse(a);
       if (p) PIPE = JSON.parse(p);
+      if (ng) NEGS = JSON.parse(ng);
+      if (si) SINS = JSON.parse(si);
       if (n) NID = parseInt(n);
     } catch(e) {}
     if (!AP.length) initBase(); else migrate();
@@ -664,6 +840,8 @@ async function dbLoad() {
     } else {
       AP = data.apolices || [];
       PIPE = data.pipeline || [];
+      NEGS = data.negs || [];
+      SINS = data.sins || [];
       NID = data.next_id || 300;
       migrate();
       // Atualiza cache local
@@ -771,7 +949,12 @@ const BASE=[
 // ================================================================
 // STATE
 // ================================================================
-let AP=[], PIPE=[], NID=300;
+let AP=[], PIPE=[], NEGS=[], SINS=[], NID=300;
+// IDs de edição
+let editNegId=null, editSinId=null, convNegId=null, cicloApId=null;
+
+const ESTAGIOS_NEG=['Lead identificado','Contato feito','Cotação em andamento','Proposta enviada','Em negociação','Fechado','Perdido'];
+const ESTAGIOS_SIN=['Avisado','Documentação pendente','Em análise','Exigência da seguradora','Regulação','Indenizado','Negado','Encerrado'];
 let editId=null, chipF='todas', tabU='vc', apSC='urg', apSD=1;
 
 const MOTIVOS_PERDA=['Preço','Concorrente','Sem retorno','Cancelou atividade','Sem interesse','Outra corretora','Outro'];
@@ -802,6 +985,13 @@ function migrate(){
     if(p.data_proxima_acao===undefined)p.data_proxima_acao='';
     if(p.obs===undefined)p.obs='';
     if(!p.historico_pipe)p.historico_pipe=[];
+  });
+  NEGS.forEach(n=>{
+    if(!n.historico_neg)n.historico_neg=[];
+    if(!n.ap_gerada_id)n.ap_gerada_id=null;
+  });
+  SINS.forEach(s=>{
+    if(!s.historico_sin)s.historico_sin=[];
   });
 }
 function initBase(){
@@ -970,7 +1160,8 @@ function goPage(p){
   document.querySelectorAll('.page').forEach(e=>e.style.display='none');
   document.querySelectorAll('.ni').forEach(e=>e.classList.remove('on'));
   document.getElementById('page-'+p).style.display='';
-  document.getElementById('nav-'+p).classList.add('on');
+  const navEl=document.getElementById('nav-'+p);
+  if(navEl) navEl.classList.add('on');
   curPage=p;renderPage(p);
 }
 function renderCurrent(){renderPage(curPage);}
@@ -979,6 +1170,8 @@ function renderPage(p){
   if(p==='apolices')renderAp();
   if(p==='urgentes')renderUrg();
   if(p==='pipeline')renderPipe();
+  if(p==='novos')renderNovos();
+  if(p==='sinistros')renderSinistros();
   if(p==='analytics')renderAnalytics();
 }
 
@@ -1346,6 +1539,7 @@ function abrirStatus(id){
   else if(ap.bloquear_automacao){bn.style.display='';bn.textContent='🔒 Automação bloqueada — use "Reset automação" para reativar.';}
   else bn.style.display='none';
   document.getElementById('btn-reset').style.display=ap.bloquear_automacao?'':'none';
+  document.getElementById('btn-ciclo').style.display=ap.status_apolice==='Renovada'?'':'none';
   document.getElementById('blk-info').textContent=ap.bloquear_automacao?'Automação desativada':'Automação ativa';
   const hist=(ap.historico||[]).slice(-8).reverse();
   document.getElementById('hist-list').innerHTML=hist.length
@@ -1491,6 +1685,7 @@ function abrirEditCard(cid) {
   const c = PIPE.find(p => p.id === cid); if (!c) return;
   document.getElementById('ep-title').textContent = c.tipo_oportunidade === 'novo_negocio' ? 'Editar negócio' : 'Editar renovação';
   document.getElementById('ep-sub').textContent = c.cliente;
+  document.getElementById('ep-mover').value = '';
   document.getElementById('ep-n').value = c.nome || '';
   document.getElementById('ep-c').value = c.cliente || '';
   document.getElementById('ep-prod').value = c.produto || '';
@@ -1505,6 +1700,9 @@ function abrirEditCard(cid) {
 
 function salvarEditCard() {
   const c = PIPE.find(p => p.id === editPipeId); if (!c) return;
+  // Verificar se vai mover de pipeline
+  const destino = document.getElementById('ep-mover').value;
+  if (destino) { closeM('m-edit-pipe'); moverCardEntrePipelines('pipe', editPipeId, destino); return; }
   const novoEst = document.getElementById('ep-e').value;
   const antEst = c.estagio;
   c.nome = document.getElementById('ep-n').value.trim() || c.nome;
@@ -1520,7 +1718,6 @@ function salvarEditCard() {
   if (novoEst !== antEst) {
     c.historico_pipe = c.historico_pipe || [];
     c.historico_pipe.push({ data: new Date().toISOString(), de: antEst, para: novoEst, tipo: 'manual' });
-    // Sync apólice só se for renovação
     if (c.tipo_oportunidade === 'renovacao' && c.ap_id) {
       syncApoliceFromPipe(c, antEst, novoEst);
     }
@@ -1559,6 +1756,99 @@ function syncApoliceFromPipe(card, antEst, novoEst) {
 }
 
 
+
+
+// ================================================================
+// MOVER CARD ENTRE PIPELINES
+// ================================================================
+function moverCardEntrePipelines(tipo_origem, id_card, destino) {
+  // tipo_origem: 'pipe' | 'neg' | 'sin'
+  // destino: 'pipeline' | 'novos' | 'sinistros'
+  const ts = new Date().toISOString();
+  const nomeDestino = destino==='pipeline'?'Renovações':destino==='novos'?'Novos Negócios':'Sinistros';
+  const nomeOrigem  = tipo_origem==='pipe'?'Renovações':tipo_origem==='neg'?'Novos Negócios':'Sinistros';
+  const registro = {data:ts, de:nomeOrigem, para:nomeDestino, tipo:'mover_pipeline'};
+
+  // Extrair dados comuns do card de origem
+  let base = {};
+  if (tipo_origem === 'pipe') {
+    const c = PIPE.find(x=>x.id===id_card); if(!c) return;
+    base = {cliente:c.cliente, produto:c.produto||'', seguradora:c.seguradora||'',
+            valor:c.valor||0, obs:c.obs||'', proxima_acao:c.proxima_acao||'',
+            data_proxima_acao:c.data_proxima_acao||'', ap_id:c.ap_id||null,
+            hist_anterior:[...(c.historico_pipe||[]),registro]};
+    PIPE.splice(PIPE.findIndex(x=>x.id===id_card),1);
+  } else if (tipo_origem === 'neg') {
+    const n = NEGS.find(x=>x.id===id_card); if(!n) return;
+    base = {cliente:n.cliente, produto:n.produto||'', seguradora:n.seguradora||'',
+            valor:n.valor||0, obs:n.obs||'', proxima_acao:n.proxima_acao||'',
+            data_proxima_acao:n.data_proxima_acao||'', ap_id:null,
+            hist_anterior:[...(n.historico_neg||[]),registro]};
+    NEGS.splice(NEGS.findIndex(x=>x.id===id_card),1);
+  } else {
+    const s = SINS.find(x=>x.id===id_card); if(!s) return;
+    base = {cliente:s.cliente, produto:s.produto||'', seguradora:s.seguradora||'',
+            valor:s.valor||0, obs:s.obs||'', proxima_acao:s.proxima_acao||'',
+            data_proxima_acao:s.data_proxima_acao||'', ap_id:null,
+            hist_anterior:[...(s.historico_sin||[]),registro]};
+    SINS.splice(SINS.findIndex(x=>x.id===id_card),1);
+  }
+
+  const novoId = NID++;
+
+  if (destino === 'pipeline') {
+    PIPE.push({
+      id:novoId, nome:`Renovação — ${base.cliente}`,
+      cliente:base.cliente, produto:base.produto, seguradora:base.seguradora,
+      valor:base.valor, obs:base.obs, proxima_acao:base.proxima_acao,
+      data_proxima_acao:base.data_proxima_acao,
+      estagio:'Identificada', tipo_oportunidade: base.ap_id ? 'renovacao' : 'renovacao',
+      ap_id:base.ap_id||null, auto:false,
+      historico_pipe:base.hist_anterior, ts
+    });
+  } else if (destino === 'novos') {
+    NEGS.push({
+      id:novoId, nome:`Negócio — ${base.cliente}`,
+      cliente:base.cliente, produto:base.produto, seguradora:base.seguradora,
+      valor:base.valor, obs:base.obs, proxima_acao:base.proxima_acao,
+      data_proxima_acao:base.data_proxima_acao,
+      estagio:'Lead identificado', responsavel:'', ap_gerada_id:null,
+      historico_neg:base.hist_anterior, ts
+    });
+  } else {
+    SINS.push({
+      id:novoId, cliente:base.cliente, produto:base.produto,
+      seguradora:base.seguradora, numero:'',
+      data_aviso:today(), valor:base.valor, obs:base.obs,
+      proxima_acao:base.proxima_acao, data_proxima_acao:base.data_proxima_acao,
+      estagio:'Avisado', responsavel:'',
+      historico_sin:base.hist_anterior, ts
+    });
+  }
+
+  save();
+  // Renderizar página de destino e origem
+  if(destino==='pipeline'||tipo_origem==='pipe') renderPipe();
+  if(destino==='novos'||tipo_origem==='neg') renderNovos();
+  if(destino==='sinistros'||tipo_origem==='sin') renderSinistros();
+  updateBadges();
+  alert(`Card movido para ${nomeDestino} com sucesso!`);
+}
+
+// ================================================================
+// BADGES SIDEBAR
+// ================================================================
+function updateBadges(){
+  const inc=AP.filter(a=>a.inconsistente).length;
+  const urg=AP.filter(a=>{const d=dd(a.fim);return d>=0&&d<=30&&!['Renovada','Cancelada','Perdida'].includes(a.status_apolice)&&a.tipo!=='Vida';}).length+inc;
+  const pipe=PIPE.filter(p=>!['Renovada','Perdida'].includes(p.estagio)).length;
+  const novos=NEGS.filter(n=>!['Fechado','Perdido'].includes(n.estagio)).length;
+  const sins=SINS.filter(s=>!['Indenizado','Negado','Encerrado'].includes(s.estagio)).length;
+  const sb=(id,v,show)=>{const el=document.getElementById(id);if(!el)return;el.textContent=v;el.style.display=show?'':'none';};
+  sb('nb-inc','!',inc>0);sb('nb-ap',urg,urg>0);sb('nb-urg',urg,urg>0);sb('nb-pipe',pipe,pipe>0);
+  sb('nb-novos',novos,novos>0);sb('nb-sin',sins,sins>0);
+}
+
 function wpp(id){
   const ap=AP.find(a=>a.id===id);if(!ap)return;
   const d=dd(ap.fim);
@@ -1575,7 +1865,7 @@ function exportCSV(){
   dl('\ufeff'+[cols.join(','),...rows].join('\n'),'haus_apolices_'+today()+'.csv','text/csv;charset=utf-8');closeM('m-export');
 }
 function exportJSON(){
-  dl(JSON.stringify({exportado_em:new Date().toISOString(),versao:'4.0',apolices:AP,pipeline:PIPE},null,2),'haus_backup_'+today()+'.json','application/json');closeM('m-export');
+  dl(JSON.stringify({exportado_em:new Date().toISOString(),versao:'5.0',apolices:AP,pipeline:PIPE,negs:NEGS,sins:SINS},null,2),'haus_backup_'+today()+'.json','application/json');closeM('m-export');
 }
 function doImportClick(){document.getElementById('imp-file').click();}
 function doImport(evt){
@@ -1584,8 +1874,8 @@ function doImport(evt){
   reader.onload=e=>{
     try{const data=JSON.parse(e.target.result);if(!data.apolices){alert('Arquivo inválido.');return;}
     if(!confirm(`Importar ${data.apolices.length} apólices?`))return;
-    AP=data.apolices;PIPE=data.pipeline||[];
-    NID=Math.max(...AP.map(a=>a.id),...PIPE.map(p=>p.id),300)+1;
+    AP=data.apolices;PIPE=data.pipeline||[];NEGS=data.negs||[];SINS=data.sins||[];
+    NID=Math.max(...AP.map(a=>a.id),...PIPE.map(p=>p.id),...(NEGS.map(n=>n.id)||[0]),...(SINS.map(s=>s.id)||[0]),300)+1;
     migrate();save();closeM('m-export');runDaily(false);alert('Importação concluída!');}
     catch(e2){alert('Erro: '+e2.message);}
   };reader.readAsText(file);
@@ -1602,6 +1892,378 @@ document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.
 // ================================================================
 // INIT
 // ================================================================
+
+// ================================================================
+// NOVOS NEGÓCIOS — funções
+// ================================================================
+function openModalNovoNegocio(){
+  ['nn-nome','nn-cli','nn-prod','nn-seg','nn-val','nn-resp','nn-pa','nn-dpa','nn-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('nn-est').value='Lead identificado';
+  openM('m-novo-neg');
+}
+function salvarNovoNeg(){
+  const cli=document.getElementById('nn-cli').value.trim();
+  const nome=document.getElementById('nn-nome').value.trim()||`Novo negócio — ${cli}`;
+  if(!cli){alert('Preencha o cliente.');return;}
+  NEGS.push({
+    id:NID++,nome,cliente:cli,
+    produto:document.getElementById('nn-prod').value||'',
+    seguradora:document.getElementById('nn-seg').value||'',
+    valor:Number(document.getElementById('nn-val').value)||0,
+    estagio:document.getElementById('nn-est').value,
+    responsavel:document.getElementById('nn-resp').value||'',
+    proxima_acao:document.getElementById('nn-pa').value||'',
+    data_proxima_acao:document.getElementById('nn-dpa').value||'',
+    obs:document.getElementById('nn-obs').value||'',
+    ap_gerada_id:null,historico_neg:[],ts:new Date().toISOString()
+  });
+  save();closeM('m-novo-neg');renderNovos();updateBadges();
+}
+function abrirEditNeg(id){
+  editNegId=id;const n=NEGS.find(x=>x.id===id);if(!n)return;
+  document.getElementById('en-mover').value='';
+  document.getElementById('en-title').textContent='Editar — '+n.cliente;
+  document.getElementById('en-sub').textContent=n.produto||'';
+  document.getElementById('en-nome').value=n.nome||'';
+  document.getElementById('en-cli').value=n.cliente||'';
+  document.getElementById('en-prod').value=n.produto||'';
+  document.getElementById('en-seg').value=n.seguradora||'';
+  document.getElementById('en-val').value=n.valor||'';
+  document.getElementById('en-est').value=n.estagio||'Lead identificado';
+  document.getElementById('en-resp').value=n.responsavel||'';
+  document.getElementById('en-pa').value=n.proxima_acao||'';
+  document.getElementById('en-dpa').value=n.data_proxima_acao||'';
+  document.getElementById('en-obs').value=n.obs||'';
+  const banner=document.getElementById('en-ciclo-banner');
+  banner.style.display=n.estagio==='Fechado'&&!n.ap_gerada_id?'':'none';
+  openM('m-edit-neg');
+}
+function salvarEditNeg(){
+  const n=NEGS.find(x=>x.id===editNegId);if(!n)return;
+  // Verificar mover de pipeline
+  const destino=document.getElementById('en-mover').value;
+  if(destino){closeM('m-edit-neg');moverCardEntrePipelines('neg',editNegId,destino);return;}
+  const novoEst=document.getElementById('en-est').value;
+  const antEst=n.estagio;
+  n.nome=document.getElementById('en-nome').value.trim()||n.nome;
+  n.cliente=document.getElementById('en-cli').value.trim()||n.cliente;
+  n.produto=document.getElementById('en-prod').value;
+  n.seguradora=document.getElementById('en-seg').value;
+  n.valor=Number(document.getElementById('en-val').value)||0;
+  n.estagio=novoEst;
+  n.responsavel=document.getElementById('en-resp').value;
+  n.proxima_acao=document.getElementById('en-pa').value;
+  n.data_proxima_acao=document.getElementById('en-dpa').value;
+  n.obs=document.getElementById('en-obs').value;
+  n.ts=new Date().toISOString();
+  if(novoEst!==antEst){n.historico_neg=n.historico_neg||[];n.historico_neg.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'manual'});}
+  // Se fechou, perguntar conversão
+  if(novoEst==='Fechado'&&!n.ap_gerada_id){
+    save();closeM('m-edit-neg');renderNovos();updateBadges();
+    if(confirm(`"${n.cliente}" foi fechado! Deseja transformar este negócio em apólice agora?`)){
+      convNegId=editNegId;abrirConversao(n);
+    }
+    return;
+  }
+  save();closeM('m-edit-neg');renderNovos();updateBadges();
+}
+function excluirNeg(){
+  const n=NEGS.find(x=>x.id===editNegId);if(!n)return;
+  if(!confirm(`Excluir "${n.nome}"?`))return;
+  NEGS.splice(NEGS.findIndex(x=>x.id===editNegId),1);
+  save();closeM('m-edit-neg');renderNovos();updateBadges();
+}
+function converterEmApolice(){
+  const n=NEGS.find(x=>x.id===editNegId);if(!n)return;
+  closeM('m-edit-neg');convNegId=editNegId;abrirConversao(n);
+}
+function abrirConversao(n){
+  document.getElementById('cv-cli').value=n.cliente||'';
+  document.getElementById('cv-tipo').value=n.produto||'';
+  document.getElementById('cv-seg').value=n.seguradora||'';
+  document.getElementById('cv-pre').value=n.valor||'';
+  document.getElementById('cv-resp').value=n.responsavel||'';
+  document.getElementById('cv-obs').value=n.obs||'';
+  document.getElementById('cv-num').value='';
+  document.getElementById('cv-ini').value=today();
+  // vencimento = +1 ano
+  const t=new Date();t.setFullYear(t.getFullYear()+1);
+  document.getElementById('cv-fim').value=t.toISOString().substring(0,10);
+  openM('m-conv-ap');
+}
+function confirmarConversao(){
+  const fim=document.getElementById('cv-fim').value;
+  if(!fim){alert('Preencha a data de vencimento.');return;}
+  const tipo=document.getElementById('cv-tipo').value||'Outro';
+  const isVida=tipo==='Vida';
+  const ap={
+    id:NID++,
+    cliente:document.getElementById('cv-cli').value,
+    seguradora:document.getElementById('cv-seg').value,
+    tipo,numero:document.getElementById('cv-num').value,
+    premio:Number(document.getElementById('cv-pre').value)||0,
+    inicio:document.getElementById('cv-ini').value,fim,
+    obs:document.getElementById('cv-obs').value,
+    responsavel:document.getElementById('cv-resp').value,
+    status_renovacao:isVida?'Renovada':'Não iniciada',
+    status_apolice:'Ativa',alerta:'OK',
+    renovacao_automatica:isVida,exigir_acao_comercial:!isVida,
+    bloquear_automacao:false,alterado_manualmente:false,
+    motivo_alteracao:'',motivo_perda:'',data_renovacao:'',apolice_substituta:'',
+    proxima_acao:'',data_proxima_acao:'',ultima_interacao:'',
+    historico:[{data:new Date().toISOString(),de:'',para:'Criada',tipo:'conversao',motivo:'Convertida de novo negócio'}],
+    inconsistente:false,ts:new Date().toISOString()
+  };
+  ap.status_apolice=calcSA(ap);ap.alerta=calcAlerta(ap);ap.inconsistente=calcInc(ap);
+  AP.push(ap);
+  // Vincular no neg
+  const n=NEGS.find(x=>x.id===convNegId);
+  if(n){n.ap_gerada_id=ap.id;n.estagio='Fechado';n.historico_neg=n.historico_neg||[];n.historico_neg.push({data:new Date().toISOString(),de:n.estagio,para:'Fechado',tipo:'conversao',motivo:'Convertido em apólice #'+ap.id});}
+  save();closeM('m-conv-ap');renderNovos();runDaily(true);
+  alert(`Apólice criada para ${ap.cliente}! Vencimento: ${DT(ap.fim)}`);
+}
+
+function renderNovos(){
+  const ab=NEGS.filter(n=>!['Fechado','Perdido'].includes(n.estagio));
+  const fn=NEGS.filter(n=>n.estagio==='Fechado');
+  const pd=NEGS.filter(n=>n.estagio==='Perdido');
+  document.getElementById('novos-m').innerHTML=`
+    <div class="mc mc-b"><div class="ml">Em aberto</div><div class="mv mv-b">${ab.length}</div><div class="ms">${R(ab.reduce((s,n)=>s+Number(n.valor||0),0))}</div></div>
+    <div class="mc mc-g"><div class="ml">Fechados</div><div class="mv mv-g">${fn.length}</div><div class="ms">${R(fn.reduce((s,n)=>s+Number(n.valor||0),0))}</div></div>
+    <div class="mc mc-r"><div class="ml">Perdidos</div><div class="mv mv-r">${pd.length}</div><div class="ms">${R(pd.reduce((s,n)=>s+Number(n.valor||0),0))}</div></div>
+    <div class="mc mc-gr"><div class="ml">Taxa conversão</div><div class="mv">${NEGS.length>0?Math.round(fn.length/NEGS.length*100):0}%</div><div class="ms">${fn.length} de ${NEGS.length}</div></div>
+  `;
+  const board=document.getElementById('novos-board');
+  board.innerHTML=ESTAGIOS_NEG.map(est=>{
+    const cards=NEGS.filter(n=>n.estagio===est);
+    const tot=cards.reduce((s,c)=>s+Number(c.valor||0),0);
+    const isF=est==='Fechado',isP=est==='Perdido';
+    const colCls=isF?'pipe-col pipe-col-won':isP?'pipe-col pipe-col-lost':'pipe-col';
+    return`<div class="${colCls}" data-est="${est}" data-pipe="novos"
+        ondragover="onDO(event,this)" ondragleave="onDL(this)" ondrop="onDPNovos(event,this,'${est}')">
+      <div class="phd"><span class="pnm">${est}</span><span class="pcnt">${cards.length}</span></div>
+      <div class="ptot">${R(tot)}</div>
+      ${cards.map(c=>{
+        const fuLbl=c.data_proxima_acao?(()=>{const df=dd(c.data_proxima_acao);return df<0?`<div style="font-size:10px;color:var(--r)">FU: ${Math.abs(df)}d atraso</div>`:df===0?`<div style="font-size:10px;color:var(--r)">FU: Hoje</div>`:df<=3?`<div style="font-size:10px;color:var(--a)">FU: ${df}d</div>`:''})():'';
+        const hasAp=c.ap_gerada_id?`<span style="font-size:9px;background:var(--gb);color:var(--g);border:1px solid var(--gbr);padding:0 4px;border-radius:3px">✓ Apólice criada</span>`:'';
+        return`<div class="pcard" draggable="true" data-cid="${c.id}" data-pipe="novos"
+            ondragstart="onDSNovos(event)" ondragend="onDE(event)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px">
+            <span style="font-size:9px;background:var(--tlb);color:var(--tl);border:1px solid var(--tlbr);padding:0 5px;border-radius:3px;font-weight:600">NOVO NEG.</span>
+            <button onclick="event.stopPropagation();abrirEditNeg(${c.id})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;padding:0" title="Editar">✏</button>
+          </div>
+          <div class="pc-n">${c.cliente}</div>
+          <div class="pc-tp">${c.produto||'—'}</div>
+          ${c.seguradora?`<div style="font-size:10px;color:var(--tx3)">${c.seguradora}</div>`:''}
+          <div class="pc-row" style="margin-top:5px"><span class="pc-val">${c.valor>0?R(c.valor):'—'}</span></div>
+          ${fuLbl}${hasAp?`<div style="margin-top:4px">${hasAp}</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+// Drag novos negócios
+function onDSNovos(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('neg-id',e.currentTarget.dataset.cid);}
+function onDPNovos(e,col,novoEst){
+  e.preventDefault();col.classList.remove('dov','dov-w','dov-l');
+  const cid=parseInt(e.dataTransfer.getData('neg-id'));
+  const card=NEGS.find(n=>n.id===cid);
+  if(!card||card.estagio===novoEst)return;
+  const antEst=card.estagio;
+  card.estagio=novoEst;
+  card.historico_neg=card.historico_neg||[];
+  card.historico_neg.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'drag'});
+  card.ts=new Date().toISOString();
+  save();renderNovos();updateBadges();
+  // Se arrastou para Fechado, perguntar conversão
+  if(novoEst==='Fechado'&&!card.ap_gerada_id){
+    if(confirm(`"${card.cliente}" foi para Fechado! Deseja transformar em apólice?`)){
+      convNegId=card.id;abrirConversao(card);
+    }
+  }
+}
+
+// ================================================================
+// SINISTROS — funções
+// ================================================================
+function openModalNovoSinistro(){
+  ['ns-cli','ns-prod','ns-seg','ns-num','ns-val','ns-resp','ns-pa','ns-dpa','ns-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ns-est').value='Avisado';
+  document.getElementById('ns-data').value=today();
+  openM('m-novo-sin');
+}
+function salvarNovoSin(){
+  const cli=document.getElementById('ns-cli').value.trim();
+  if(!cli){alert('Preencha o cliente.');return;}
+  SINS.push({
+    id:NID++,cliente:cli,
+    produto:document.getElementById('ns-prod').value||'',
+    seguradora:document.getElementById('ns-seg').value||'',
+    numero:document.getElementById('ns-num').value||'',
+    data_aviso:document.getElementById('ns-data').value||today(),
+    valor:Number(document.getElementById('ns-val').value)||0,
+    estagio:document.getElementById('ns-est').value,
+    responsavel:document.getElementById('ns-resp').value||'',
+    proxima_acao:document.getElementById('ns-pa').value||'',
+    data_proxima_acao:document.getElementById('ns-dpa').value||'',
+    obs:document.getElementById('ns-obs').value||'',
+    historico_sin:[],ts:new Date().toISOString()
+  });
+  save();closeM('m-novo-sin');renderSinistros();updateBadges();
+}
+function abrirEditSin(id){
+  editSinId=id;const s=SINS.find(x=>x.id===id);if(!s)return;
+  document.getElementById('es-mover').value='';
+  document.getElementById('es-sub').textContent=s.cliente+' · '+s.seguradora;
+  document.getElementById('es-cli').value=s.cliente||'';
+  document.getElementById('es-prod').value=s.produto||'';
+  document.getElementById('es-seg').value=s.seguradora||'';
+  document.getElementById('es-num').value=s.numero||'';
+  document.getElementById('es-data').value=s.data_aviso||'';
+  document.getElementById('es-val').value=s.valor||'';
+  document.getElementById('es-est').value=s.estagio||'Avisado';
+  document.getElementById('es-resp').value=s.responsavel||'';
+  document.getElementById('es-pa').value=s.proxima_acao||'';
+  document.getElementById('es-dpa').value=s.data_proxima_acao||'';
+  document.getElementById('es-obs').value=s.obs||'';
+  openM('m-edit-sin');
+}
+function salvarEditSin(){
+  const s=SINS.find(x=>x.id===editSinId);if(!s)return;
+  // Verificar mover de pipeline
+  const destino=document.getElementById('es-mover').value;
+  if(destino){closeM('m-edit-sin');moverCardEntrePipelines('sin',editSinId,destino);return;}
+  const novoEst=document.getElementById('es-est').value;
+  const antEst=s.estagio;
+  s.cliente=document.getElementById('es-cli').value.trim()||s.cliente;
+  s.produto=document.getElementById('es-prod').value;
+  s.seguradora=document.getElementById('es-seg').value;
+  s.numero=document.getElementById('es-num').value;
+  s.data_aviso=document.getElementById('es-data').value;
+  s.valor=Number(document.getElementById('es-val').value)||0;
+  s.estagio=novoEst;
+  s.responsavel=document.getElementById('es-resp').value;
+  s.proxima_acao=document.getElementById('es-pa').value;
+  s.data_proxima_acao=document.getElementById('es-dpa').value;
+  s.obs=document.getElementById('es-obs').value;
+  s.ts=new Date().toISOString();
+  if(novoEst!==antEst){s.historico_sin=s.historico_sin||[];s.historico_sin.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'manual'});}
+  save();closeM('m-edit-sin');renderSinistros();updateBadges();
+}
+function excluirSin(){
+  const s=SINS.find(x=>x.id===editSinId);if(!s)return;
+  if(!confirm(`Excluir sinistro de "${s.cliente}"?`))return;
+  SINS.splice(SINS.findIndex(x=>x.id===editSinId),1);
+  save();closeM('m-edit-sin');renderSinistros();updateBadges();
+}
+function renderSinistros(){
+  const ab=SINS.filter(s=>!['Indenizado','Negado','Encerrado'].includes(s.estagio));
+  const ok=SINS.filter(s=>s.estagio==='Indenizado');
+  const ng=SINS.filter(s=>s.estagio==='Negado');
+  const vlAb=ab.reduce((s,x)=>s+Number(x.valor||0),0);
+  document.getElementById('sin-m').innerHTML=`
+    <div class="mc mc-pu"><div class="ml">Em aberto</div><div class="mv" style="color:var(--pu)">${ab.length}</div><div class="ms">${R(vlAb)}</div></div>
+    <div class="mc mc-g"><div class="ml">Indenizados</div><div class="mv mv-g">${ok.length}</div><div class="ms">${R(ok.reduce((s,x)=>s+Number(x.valor||0),0))}</div></div>
+    <div class="mc mc-r"><div class="ml">Negados</div><div class="mv mv-r">${ng.length}</div><div class="ms">${R(ng.reduce((s,x)=>s+Number(x.valor||0),0))}</div></div>
+    <div class="mc mc-gr"><div class="ml">Total registrados</div><div class="mv">${SINS.length}</div><div class="ms">&nbsp;</div></div>
+  `;
+  const board=document.getElementById('sin-board');
+  board.innerHTML=ESTAGIOS_SIN.map(est=>{
+    const cards=SINS.filter(s=>s.estagio===est);
+    const tot=cards.reduce((s,c)=>s+Number(c.valor||0),0);
+    const isOk=['Indenizado','Encerrado'].includes(est);
+    const isNg=est==='Negado';
+    const colCls=isOk?'pipe-col pipe-col-won':isNg?'pipe-col pipe-col-lost':'pipe-col';
+    return`<div class="${colCls}" data-est="${est}" data-pipe="sins"
+        ondragover="onDO(event,this)" ondragleave="onDL(this)" ondrop="onDPSins(event,this,'${est}')">
+      <div class="phd"><span class="pnm" style="font-size:9px">${est}</span><span class="pcnt">${cards.length}</span></div>
+      <div class="ptot">${R(tot)}</div>
+      ${cards.map(c=>{
+        const fuLbl=c.data_proxima_acao?(()=>{const df=dd(c.data_proxima_acao);return df<0?`<div style="font-size:10px;color:var(--r)">FU: ${Math.abs(df)}d atraso</div>`:df===0?`<div style="font-size:10px;color:var(--r)">FU: Hoje</div>`:df<=3?`<div style="font-size:10px;color:var(--a)">FU: ${df}d</div>`:''})():'';
+        return`<div class="sin-card" draggable="true" data-cid="${c.id}"
+            ondragstart="onDSSins(event)" ondragend="onDE(event)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px">
+            <span class="b-sin">SINISTRO</span>
+            <button onclick="event.stopPropagation();abrirEditSin(${c.id})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;padding:0" title="Editar">✏</button>
+          </div>
+          <div class="pc-n">${c.cliente}</div>
+          <div class="pc-tp">${c.produto||'—'} · ${c.seguradora||'—'}</div>
+          ${c.numero?`<div style="font-size:10px;color:var(--tx3)">Nº ${c.numero}</div>`:''}
+          <div class="pc-row" style="margin-top:5px"><span class="pc-val">${c.valor>0?R(c.valor):'—'}</span><span style="font-size:10px;color:var(--tx3)">${c.data_aviso?DT(c.data_aviso):''}</span></div>
+          ${fuLbl}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+// Drag sinistros
+function onDSSins(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('sin-id',e.currentTarget.dataset.cid);}
+function onDPSins(e,col,novoEst){
+  e.preventDefault();col.classList.remove('dov','dov-w','dov-l');
+  const cid=parseInt(e.dataTransfer.getData('sin-id'));
+  const card=SINS.find(s=>s.id===cid);
+  if(!card||card.estagio===novoEst)return;
+  const antEst=card.estagio;
+  card.estagio=novoEst;card.ts=new Date().toISOString();
+  card.historico_sin=card.historico_sin||[];
+  card.historico_sin.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'drag'});
+  save();renderSinistros();updateBadges();
+}
+
+// ================================================================
+// PRÓXIMO CICLO — apólice renovada gera novo ano
+// ================================================================
+function abrirProximoCiclo(apId){
+  cicloApId=apId;
+  const ap=AP.find(a=>a.id===apId);if(!ap)return;
+  // Verificar duplicidade
+  const jaExiste=AP.find(a=>a.cliente===ap.cliente&&a.tipo===ap.tipo&&a.seguradora===ap.seguradora&&a.fim>ap.fim&&a.id!==ap.id);
+  if(jaExiste){if(!confirm(`Já existe uma apólice futura para ${ap.cliente} (${ap.tipo}) com vencimento em ${DT(jaExiste.fim)}. Criar mesmo assim?`))return;}
+  document.getElementById('ci-cli').value=ap.cliente;
+  document.getElementById('ci-tipo').value=ap.tipo;
+  document.getElementById('ci-seg').value=ap.seguradora;
+  document.getElementById('ci-pre').value=ap.premio||'';
+  document.getElementById('ci-resp').value=ap.responsavel||'';
+  document.getElementById('ci-obs').value='';
+  // Novo vencimento = +1 ano
+  let novoFim='';
+  if(ap.fim){const d=new Date(ap.fim+'T00:00:00');d.setFullYear(d.getFullYear()+1);novoFim=d.toISOString().substring(0,10);}
+  document.getElementById('ci-fim').value=novoFim;
+  openM('m-ciclo');
+}
+function confirmarCiclo(){
+  const fim=document.getElementById('ci-fim').value;
+  if(!fim){alert('Preencha o novo vencimento.');return;}
+  const apAnt=AP.find(a=>a.id===cicloApId);
+  const tipo=apAnt?apAnt.tipo:'Outro';
+  const isVida=tipo==='Vida';
+  const novaAp={
+    id:NID++,
+    cliente:document.getElementById('ci-cli').value,
+    seguradora:document.getElementById('ci-seg').value,
+    tipo,numero:'',
+    premio:Number(document.getElementById('ci-pre').value)||0,
+    inicio:apAnt?apAnt.fim:'',fim,
+    obs:document.getElementById('ci-obs').value,
+    responsavel:document.getElementById('ci-resp').value,
+    status_renovacao:isVida?'Renovada':'Não iniciada',
+    status_apolice:'Ativa',alerta:'OK',
+    renovacao_automatica:isVida,exigir_acao_comercial:!isVida,
+    bloquear_automacao:false,alterado_manualmente:false,
+    motivo_alteracao:'',motivo_perda:'',data_renovacao:'',apolice_substituta:'',
+    proxima_acao:'',data_proxima_acao:'',ultima_interacao:'',
+    historico:[{data:new Date().toISOString(),de:'',para:'Criada',tipo:'ciclo',motivo:'Próximo ciclo gerado da apólice #'+cicloApId}],
+    inconsistente:false,ts:new Date().toISOString()
+  };
+  novaAp.status_apolice=calcSA(novaAp);novaAp.alerta=calcAlerta(novaAp);novaAp.inconsistente=calcInc(novaAp);
+  AP.push(novaAp);
+  // Registrar na apólice antiga
+  if(apAnt){apAnt.apolice_substituta=String(novaAp.id);apAnt.historico=apAnt.historico||[];apAnt.historico.push({data:new Date().toISOString(),de:'',para:'',tipo:'ciclo',motivo:'Próximo ciclo: apólice #'+novaAp.id+' criada'});}
+  save();closeM('m-ciclo');runDaily(true);
+  alert(`Próximo ciclo criado para ${novaAp.cliente}! Vencimento: ${DT(novaAp.fim)}`);
+}
+
 (async () => {
   initSupabase();
   await load();
