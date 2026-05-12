@@ -1460,12 +1460,21 @@ function renderPipe(){
   }).join('');
 }
 
-function onDS(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',e.currentTarget.dataset.cid);}
+function onDS(e){e.stopPropagation();e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',e.currentTarget.dataset.cid);e.dataTransfer.setData('pipe-type','ren');}
 function onDE(e){e.currentTarget.classList.remove('dragging');document.querySelectorAll('.pipe-col').forEach(c=>c.classList.remove('dov','dov-w','dov-l'));}
-function onDO(e,col){e.preventDefault();const est=col.dataset.est;col.classList.remove('dov','dov-w','dov-l');col.classList.add(est==='Renovada'?'dov-w':est==='Perdida'?'dov-l':'dov');}
+function onDO(e,col){
+  e.preventDefault();e.stopPropagation();
+  const est=col.dataset.est;
+  const pipe=col.dataset.pipe||'ren';
+  col.classList.remove('dov','dov-w','dov-l');
+  if(pipe==='ren'){col.classList.add(est==='Renovada'?'dov-w':est==='Perdida'?'dov-l':'dov');}
+  else if(pipe==='novos'){col.classList.add(est==='Fechado'?'dov-w':est==='Perdido'?'dov-l':'dov');}
+  else if(pipe==='sins'){col.classList.add(['Indenizado','Encerrado'].includes(est)?'dov-w':est==='Negado'?'dov-l':'dov');}
+  else{col.classList.add('dov');}
+}
 function onDL(col){col.classList.remove('dov','dov-w','dov-l');}
 function onDP(e,col,novoEst){
-  e.preventDefault();col.classList.remove('dov','dov-w','dov-l');
+  e.preventDefault();e.stopPropagation();col.classList.remove('dov','dov-w','dov-l');
   const cid=parseInt(e.dataTransfer.getData('text/plain'));
   const card=PIPE.find(p=>p.id===cid);
   if(!card||card.estagio===novoEst)return;
@@ -2064,9 +2073,9 @@ function renderNovos(){
 }
 
 // Drag novos negócios
-function onDSNovos(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('neg-id',e.currentTarget.dataset.cid);}
+function onDSNovos(e){e.stopPropagation();e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('neg-id',e.currentTarget.dataset.cid);e.dataTransfer.setData('pipe-type','novos');}
 function onDPNovos(e,col,novoEst){
-  e.preventDefault();col.classList.remove('dov','dov-w','dov-l');
+  e.preventDefault();e.stopPropagation();col.classList.remove('dov','dov-w','dov-l');
   const cid=parseInt(e.dataTransfer.getData('neg-id'));
   const card=NEGS.find(n=>n.id===cid);
   if(!card||card.estagio===novoEst)return;
@@ -2198,9 +2207,9 @@ function renderSinistros(){
   }).join('');
 }
 // Drag sinistros
-function onDSSins(e){e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('sin-id',e.currentTarget.dataset.cid);}
+function onDSSins(e){e.stopPropagation();e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('sin-id',e.currentTarget.dataset.cid);e.dataTransfer.setData('pipe-type','sins');}
 function onDPSins(e,col,novoEst){
-  e.preventDefault();col.classList.remove('dov','dov-w','dov-l');
+  e.preventDefault();e.stopPropagation();col.classList.remove('dov','dov-w','dov-l');
   const cid=parseInt(e.dataTransfer.getData('sin-id'));
   const card=SINS.find(s=>s.id===cid);
   if(!card||card.estagio===novoEst)return;
