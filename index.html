@@ -1803,6 +1803,15 @@ function moverCardEntrePipelines(tipo_origem, id_card, destino) {
     SINS.splice(SINS.findIndex(x=>x.id===id_card),1);
   }
 
+  // Garantir ID único entre todos os arrays
+  const maxId = Math.max(
+    ...AP.map(a=>Number(a.id)||0),
+    ...PIPE.map(p=>Number(p.id)||0),
+    ...NEGS.map(n=>Number(n.id)||0),
+    ...SINS.map(s=>Number(s.id)||0),
+    NID
+  );
+  NID = maxId + 1;
   const novoId = NID++;
 
   if (destino === 'pipeline') {
@@ -1929,7 +1938,7 @@ function salvarNovoNeg(){
   save();closeM('m-novo-neg');renderNovos();updateBadges();
 }
 function abrirEditNeg(id){
-  editNegId=id;const n=NEGS.find(x=>x.id===id);if(!n)return;
+  editNegId=id;const n=NEGS.find(x=>Number(x.id)===Number(id));if(!n)return;
   document.getElementById('en-mover').value='';
   document.getElementById('en-title').textContent='Editar — '+n.cliente;
   document.getElementById('en-sub').textContent=n.produto||'';
@@ -2073,11 +2082,18 @@ function renderNovos(){
 }
 
 // Drag novos negócios
-function onDSNovos(e){e.stopPropagation();e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('neg-id',e.currentTarget.dataset.cid);e.dataTransfer.setData('pipe-type','novos');}
+function onDSNovos(e){
+  e.stopPropagation();
+  const card=e.currentTarget;
+  card.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('neg-id', String(card.dataset.cid));
+  e.dataTransfer.setData('pipe-type','novos');
+}
 function onDPNovos(e,col,novoEst){
   e.preventDefault();e.stopPropagation();col.classList.remove('dov','dov-w','dov-l');
-  const cid=parseInt(e.dataTransfer.getData('neg-id'));
-  const card=NEGS.find(n=>n.id===cid);
+  const cid=parseInt(e.dataTransfer.getData('neg-id'),10);
+  const card=NEGS.find(n=>Number(n.id)===cid);
   if(!card||card.estagio===novoEst)return;
   const antEst=card.estagio;
   card.estagio=novoEst;
@@ -2122,7 +2138,7 @@ function salvarNovoSin(){
   save();closeM('m-novo-sin');renderSinistros();updateBadges();
 }
 function abrirEditSin(id){
-  editSinId=id;const s=SINS.find(x=>x.id===id);if(!s)return;
+  editSinId=id;const s=SINS.find(x=>Number(x.id)===Number(id));if(!s)return;
   document.getElementById('es-mover').value='';
   document.getElementById('es-sub').textContent=s.cliente+' · '+s.seguradora;
   document.getElementById('es-cli').value=s.cliente||'';
@@ -2207,11 +2223,18 @@ function renderSinistros(){
   }).join('');
 }
 // Drag sinistros
-function onDSSins(e){e.stopPropagation();e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('sin-id',e.currentTarget.dataset.cid);e.dataTransfer.setData('pipe-type','sins');}
+function onDSSins(e){
+  e.stopPropagation();
+  const card=e.currentTarget;
+  card.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('sin-id', String(card.dataset.cid));
+  e.dataTransfer.setData('pipe-type','sins');
+}
 function onDPSins(e,col,novoEst){
   e.preventDefault();e.stopPropagation();col.classList.remove('dov','dov-w','dov-l');
-  const cid=parseInt(e.dataTransfer.getData('sin-id'));
-  const card=SINS.find(s=>s.id===cid);
+  const cid=parseInt(e.dataTransfer.getData('sin-id'),10);
+  const card=SINS.find(s=>Number(s.id)===cid);
   if(!card||card.estagio===novoEst)return;
   const antEst=card.estagio;
   card.estagio=novoEst;card.ts=new Date().toISOString();
