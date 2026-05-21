@@ -861,68 +861,58 @@ async function dbSave() {
   localStorage.setItem('h4_remote_ts', String(now.getTime()));
 }
 
-async function dbLoad() {
-  if (!SB_OK || !sb) {
-    // fallback: localStorage
-    try {
-      const a = localStorage.getItem('h4_ap');
-      const p = localStorage.getItem('h4_pi');
-      const ng= localStorage.getItem('h4_ng');
-      const si= localStorage.getItem('h4_si');
-      const cs= localStorage.getItem('h4_cs');
-      const n = localStorage.getItem('h4_ni');
-      if (a) AP = JSON.parse(a);
-      if (p) PIPE = JSON.parse(p);
-      if (ng) NEGS = JSON.parse(ng);
-      if (si) SINS = JSON.parse(si);
-      if (cs) CONS = JSON.parse(cs);
-      if (n) NID = parseInt(n);
-    } catch(e) {}
-    if (!AP.length) initBase(); else migrate();
-    return;
-  }
+function loadFromLocalStorage() {
   try {
-    setStatus('Carregando dados...');
-    const { data, error } = await sb.from('haus_crm_state').select('*').eq('id', 'main').single();
-    if (error || !data) {
-      console.warn('[Haus CRM] Sem dados no Supabase, iniciando base.');
-      // Tenta localStorage como fallback
-      try {
-        const a = localStorage.getItem('h4_ap');
-        const p = localStorage.getItem('h4_pi');
-        const n = localStorage.getItem('h4_ni');
-        if (a) AP = JSON.parse(a);
-        if (p) PIPE = JSON.parse(p);
-        if (n) NID = parseInt(n);
-      } catch(e2) {}
-      if (!AP.length) initBase(); else migrate();
-    } else {
-      AP = data.apolices || [];
+    const a = localStorage.getItem('h4_ap');
+    const p = localStorage.getItem('h4_pi');
+    const ng= localStorage.getItem('h4_ng');
+    const si= localStorage.getItem('h4_si');
+    const cs= localStorage.getItem('h4_cs');
+    const n = localStorage.getItem('h4_ni');
+    if (a) AP = JSON.parse(a);
+    if (p) PIPE = JSON.parse(p);
+    if (ng) NEGS = JSON.parse(ng);
+    if (si) SINS = JSON.parse(si);
+    if (cs) CONS = JSON.parse(cs);
+    if (n) NID = parseInt(n);
+  } catch(e) {}
+  if (!AP.length) initBase(); else migrate();
+}
+
+async function dbLoad() {
+  // Sempre carrega localStorage primeiro (resposta imediata)
+  loadFromLocalStorage();
+
+  if (!SB_OK || !sb) return;
+  // Busca Supabase com timeout de 6 segundos
+  try {
+    setStatus('Sincronizando...');
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000));
+    const query = sb.from('haus_crm_state').select('*').eq('id', 'main').single();
+    const { data, error } = await Promise.race([query, timeout.then(() => { throw new Error('timeout'); })]);
+    if (!error && data) {
+      AP   = data.apolices || [];
       PIPE = data.pipeline || [];
-      NEGS = data.negs || [];
-      SINS = data.sins || [];
-      CONS = data.cons || [];
-      NID = data.next_id || 300;
+      NEGS = data.negs     || [];
+      SINS = data.sins     || [];
+      CONS = data.cons     || [];
+      NID  = data.next_id  || 300;
       migrate();
-      // Atualiza cache local
+      // Atualiza cache local com dados frescos do servidor
       try {
         localStorage.setItem('h4_ap', JSON.stringify(AP));
         localStorage.setItem('h4_pi', JSON.stringify(PIPE));
+        localStorage.setItem('h4_ng', JSON.stringify(NEGS));
+        localStorage.setItem('h4_si', JSON.stringify(SINS));
+        localStorage.setItem('h4_cs', JSON.stringify(CONS));
         localStorage.setItem('h4_ni', String(NID));
+        localStorage.setItem('h4_remote_ts', String(new Date(data.updated_at).getTime()));
       } catch(e) {}
     }
+    // Se error, já temos os dados do localStorage carregados acima
   } catch(e) {
-    console.warn('[Haus CRM] Erro ao carregar Supabase:', e.message);
-    // Fallback localStorage
-    try {
-      const a = localStorage.getItem('h4_ap');
-      const p = localStorage.getItem('h4_pi');
-      const n = localStorage.getItem('h4_ni');
-      if (a) AP = JSON.parse(a);
-      if (p) PIPE = JSON.parse(p);
-      if (n) NID = parseInt(n);
-    } catch(e2) {}
-    if (!AP.length) initBase(); else migrate();
+    console.warn('[Haus CRM] Supabase indisponível, usando cache local:', e.message);
+    setStatus('Offline — dados locais');
   }
 }
 
