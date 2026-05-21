@@ -840,16 +840,17 @@ async function dbSave() {
   if (!SB_OK || !sb) return;
   try {
     // Upsert carteira (1 linha = estado completo)
-    await sb.from('haus_crm_state').upsert({
-      id: 'main',
-      apolices: AP,
-      pipeline: PIPE,
-      negs: NEGS,
-      sins: SINS,
-      cons: CONS,
-      next_id: NID,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'id' });
+    // Tenta salvar com cons (coluna nova); se falhar, salva sem cons (compatibilidade)
+    const payload = { id:'main', apolices:AP, pipeline:PIPE, negs:NEGS, sins:SINS, cons:CONS, next_id:NID, updated_at:new Date().toISOString() };
+    const { error: e1 } = await sb.from('haus_crm_state').upsert(payload, { onConflict:'id' });
+    if (e1) {
+      // coluna cons pode não existir ainda — tenta sem ela
+      const { error: e2 } = await sb.from('haus_crm_state').upsert(
+        { id:'main', apolices:AP, pipeline:PIPE, negs:NEGS, sins:SINS, next_id:NID, updated_at:new Date().toISOString() },
+        { onConflict:'id' }
+      );
+      if (e2) { console.warn('[Haus CRM] Erro ao salvar no Supabase:', e2.message); setStatus('Erro ao salvar ⚠'); return; }
+    }
   } catch(e) {
     console.warn('[Haus CRM] Erro ao salvar no Supabase:', e.message);
     setStatus('Erro ao salvar ⚠');
