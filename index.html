@@ -481,7 +481,6 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
     <div class="pipe-wrap"><div class="pipe-board" id="consorcio-board"></div></div>
   </div>
 </div>
-
 <!-- PAGE SINISTROS -->
 <div id="page-sinistros" class="page" style="display:none">
   <div class="ph">
@@ -502,37 +501,32 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
   <div class="mdl">
     <div class="mh"><div><div class="mt">Nova oportunidade</div><div class="msb">Consórcio ou Seguro de Vida</div></div><button class="mx" onclick="closeM('m-novo-consorcio')">✕</button></div>
     <div class="mb">
-      <div class="fr f"><div class="fg"><label class="fl">Nome da oportunidade *</label><input class="fin" id="cs-nome" placeholder="Ex: Consórcio Imóvel — João Silva"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Cliente *</label><input class="fin" id="cs-cli" placeholder="Nome do cliente"/></div><div class="fg"><label class="fl">Categoria *</label><select class="fin" id="cs-cat"><option value="Consórcio Imóvel">Consórcio Imóvel</option><option value="Consórcio Veículo">Consórcio Veículo</option><option value="Consórcio Serviços">Consórcio Serviços</option><option value="Seguro de Vida">Seguro de Vida</option><option value="Seguro de Vida — Empresarial">Seguro de Vida — Empresarial</option><option value="Previdência Privada">Previdência Privada</option></select></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Administradora / Seguradora</label><input class="fin" id="cs-seg" placeholder="Ex: Porto Seguro, Bradesco"/></div><div class="fg"><label class="fl">Valor estimado (R$)</label><input class="fin" id="cs-val" type="number" placeholder="0"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Nome *</label><input class="fin" id="cs-nome" placeholder="Ex: Consórcio Imóvel — João Silva"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente *</label><input class="fin" id="cs-cli" placeholder="Nome"/></div><div class="fg"><label class="fl">Categoria *</label><select class="fin" id="cs-cat"><option>Consórcio Imóvel</option><option>Consórcio Veículo</option><option>Consórcio Serviços</option><option>Seguro de Vida</option><option>Seguro de Vida — Empresarial</option><option>Previdência Privada</option></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Administradora / Seguradora</label><input class="fin" id="cs-seg" placeholder="Ex: Porto Seguro"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="cs-val" type="number" placeholder="0"/></div></div>
       <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="cs-est"><option>Lead identificado</option><option>Contato feito</option><option>Cotação em andamento</option><option>Proposta enviada</option><option>Em negociação</option><option>Fechado</option><option>Perdido</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="cs-resp" placeholder="Assessor"/></div></div>
       <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="cs-pa" placeholder="Ex: Enviar proposta"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="cs-dpa" type="date"/></div></div>
-      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="cs-obs" placeholder="Contexto, notas..."/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="cs-obs" placeholder="Notas..."/></div></div>
     </div>
     <div class="mf"><div></div><div class="mfr"><button class="btn" onclick="closeM('m-novo-consorcio')">Cancelar</button><button class="btn btn-p" onclick="salvarNovoConsorcio()">Salvar</button></div></div>
   </div>
 </div>
-
 <!-- MODAL EDITAR CONSÓRCIO/VIDA -->
 <div class="mo" id="m-edit-consorcio">
   <div class="mdl">
     <div class="mh"><div><div class="mt" id="ec-title">Editar oportunidade</div><div class="msb" id="ec-sub"></div></div><button class="mx" onclick="closeM('m-edit-consorcio')">✕</button></div>
     <div class="mb">
-      <div id="ec-fechado-banner" style="display:none;background:var(--gb);border:1px solid var(--gbr);border-radius:var(--rr);padding:9px 12px;font-size:12px;color:var(--g);margin-bottom:12px">
-        ✅ Negócio fechado — deseja transformar em apólice de Vida?
-        <button class="btn btn-sm btn-p" style="margin-left:8px" onclick="converterConsorcioEmApolice()">Transformar em apólice</button>
-      </div>
-      <div class="fr f"><div class="fg"><label class="fl">Nome</label><input class="fin" id="ec-nome" placeholder="Nome da oportunidade"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="ec-cli" placeholder="Nome"/></div><div class="fg"><label class="fl">Categoria</label><select class="fin" id="ec-cat"><option value="Consórcio Imóvel">Consórcio Imóvel</option><option value="Consórcio Veículo">Consórcio Veículo</option><option value="Consórcio Serviços">Consórcio Serviços</option><option value="Seguro de Vida">Seguro de Vida</option><option value="Seguro de Vida — Empresarial">Seguro de Vida — Empresarial</option><option value="Previdência Privada">Previdência Privada</option></select></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Administradora / Seguradora</label><input class="fin" id="ec-seg" placeholder="Seguradora"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="ec-val" type="number" placeholder="0"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="ec-est"><option>Lead identificado</option><option>Contato feito</option><option>Cotação em andamento</option><option>Proposta enviada</option><option>Em negociação</option><option>Fechado</option><option>Perdido</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="ec-resp" placeholder="Assessor"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="ec-pa" placeholder="Próxima ação"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="ec-dpa" type="date"/></div></div>
-      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="ec-obs" placeholder="Notas..."/></div></div>
+      <div id="ec-fechado-banner" style="display:none;background:var(--gb);border:1px solid var(--gbr);border-radius:var(--rr);padding:9px 12px;font-size:12px;color:var(--g);margin-bottom:12px">✅ Negócio fechado — transformar em apólice de Vida? <button class="btn btn-sm btn-p" style="margin-left:8px" onclick="converterConsorcioEmApolice()">Transformar</button></div>
+      <div class="fr f"><div class="fg"><label class="fl">Nome</label><input class="fin" id="ec-nome"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Cliente</label><input class="fin" id="ec-cli"/></div><div class="fg"><label class="fl">Categoria</label><select class="fin" id="ec-cat"><option>Consórcio Imóvel</option><option>Consórcio Veículo</option><option>Consórcio Serviços</option><option>Seguro de Vida</option><option>Seguro de Vida — Empresarial</option><option>Previdência Privada</option></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Seguradora</label><input class="fin" id="ec-seg"/></div><div class="fg"><label class="fl">Valor (R$)</label><input class="fin" id="ec-val" type="number"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estágio</label><select class="fin" id="ec-est"><option>Lead identificado</option><option>Contato feito</option><option>Cotação em andamento</option><option>Proposta enviada</option><option>Em negociação</option><option>Fechado</option><option>Perdido</option></select></div><div class="fg"><label class="fl">Responsável</label><input class="fin" id="ec-resp"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Próxima ação</label><input class="fin" id="ec-pa"/></div><div class="fg"><label class="fl">Data</label><input class="fin" id="ec-dpa" type="date"/></div></div>
+      <div class="fr f"><div class="fg"><label class="fl">Observações</label><input class="fin" id="ec-obs"/></div></div>
     </div>
     <div class="mf"><div class="mfl"><button class="btn btn-d btn-sm" onclick="excluirConsorcio()">🗑 Excluir</button></div><div class="mfr"><button class="btn" onclick="closeM('m-edit-consorcio')">Cancelar</button><button class="btn btn-p" onclick="salvarEditConsorcio()">Salvar</button></div></div>
   </div>
 </div>
-
 <!-- MODAL NOVA APÓLICE -->
 <div class="mo" id="m-nova-ap">
   <div class="mdl">
@@ -571,8 +565,8 @@ tr:not(.ru):not(.rv):not(.ri):not(.rvi):hover td{background:var(--bg)}
         <div class="fr f" style="margin-top:8px"><div class="fg"><label class="fl">Observação</label><input class="fin" id="e-obsp" placeholder="Detalhes..."/></div></div>
       </div>
       <div class="fr">
-        <div class="fg"><label class="fl">Vencimento da apólice</label><input class="fin" id="e-fim" type="date" title="Edite para corrigir a data real de vencimento/renovação"/></div>
-        <div class="fg"><label class="fl">Prêmio (R$)</label><input class="fin" id="e-premio" type="number" placeholder="0" title="Edite para atualizar o prêmio"/></div>
+        <div class="fg"><label class="fl">Vencimento da apólice</label><input class="fin" id="e-fim" type="date"/></div>
+        <div class="fg"><label class="fl">Prêmio (R$)</label><input class="fin" id="e-premio" type="number" placeholder="0"/></div>
       </div>
       <div class="sd">Follow-up comercial</div>
       <div class="fr">
@@ -840,17 +834,8 @@ async function dbSave() {
   if (!SB_OK || !sb) return;
   try {
     // Upsert carteira (1 linha = estado completo)
-    // Tenta salvar com cons (coluna nova); se falhar, salva sem cons (compatibilidade)
-    const payload = { id:'main', apolices:AP, pipeline:PIPE, negs:NEGS, sins:SINS, cons:CONS, next_id:NID, updated_at:new Date().toISOString() };
-    const { error: e1 } = await sb.from('haus_crm_state').upsert(payload, { onConflict:'id' });
-    if (e1) {
-      // coluna cons pode não existir ainda — tenta sem ela
-      const { error: e2 } = await sb.from('haus_crm_state').upsert(
-        { id:'main', apolices:AP, pipeline:PIPE, negs:NEGS, sins:SINS, next_id:NID, updated_at:new Date().toISOString() },
-        { onConflict:'id' }
-      );
-      if (e2) { console.warn('[Haus CRM] Erro ao salvar no Supabase:', e2.message); setStatus('Erro ao salvar ⚠'); return; }
-    }
+    const {error:_e1}=await sb.from('haus_crm_state').upsert({id:'main',apolices:AP,pipeline:PIPE,negs:NEGS,sins:SINS,cons:CONS,next_id:NID,updated_at:new Date().toISOString()},{onConflict:'id'});
+    if(_e1) await sb.from('haus_crm_state').upsert({id:'main',apolices:AP,pipeline:PIPE,negs:NEGS,sins:SINS,next_id:NID,updated_at:new Date().toISOString()},{onConflict:'id'});
   } catch(e) {
     console.warn('[Haus CRM] Erro ao salvar no Supabase:', e.message);
     setStatus('Erro ao salvar ⚠');
@@ -861,58 +846,68 @@ async function dbSave() {
   localStorage.setItem('h4_remote_ts', String(now.getTime()));
 }
 
-function loadFromLocalStorage() {
-  try {
-    const a = localStorage.getItem('h4_ap');
-    const p = localStorage.getItem('h4_pi');
-    const ng= localStorage.getItem('h4_ng');
-    const si= localStorage.getItem('h4_si');
-    const cs= localStorage.getItem('h4_cs');
-    const n = localStorage.getItem('h4_ni');
-    if (a) AP = JSON.parse(a);
-    if (p) PIPE = JSON.parse(p);
-    if (ng) NEGS = JSON.parse(ng);
-    if (si) SINS = JSON.parse(si);
-    if (cs) CONS = JSON.parse(cs);
-    if (n) NID = parseInt(n);
-  } catch(e) {}
-  if (!AP.length) initBase(); else migrate();
-}
-
 async function dbLoad() {
-  // Sempre carrega localStorage primeiro (resposta imediata)
-  loadFromLocalStorage();
-
-  if (!SB_OK || !sb) return;
-  // Busca Supabase com timeout de 6 segundos
+  if (!SB_OK || !sb) {
+    // fallback: localStorage
+    try {
+      const a = localStorage.getItem('h4_ap');
+      const p = localStorage.getItem('h4_pi');
+      const ng= localStorage.getItem('h4_ng');
+      const si= localStorage.getItem('h4_si');
+      const cs= localStorage.getItem('h4_cs');
+      const n = localStorage.getItem('h4_ni');
+      if (a) AP = JSON.parse(a);
+      if (p) PIPE = JSON.parse(p);
+      if (ng) NEGS = JSON.parse(ng);
+      if (si) SINS = JSON.parse(si);
+      if (cs) CONS = JSON.parse(cs);
+      if (n) NID = parseInt(n);
+    } catch(e) {}
+    if (!AP.length) initBase(); else migrate();
+    return;
+  }
   try {
-    setStatus('Sincronizando...');
-    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000));
-    const query = sb.from('haus_crm_state').select('*').eq('id', 'main').single();
-    const { data, error } = await Promise.race([query, timeout.then(() => { throw new Error('timeout'); })]);
-    if (!error && data) {
-      AP   = data.apolices || [];
+    setStatus('Carregando dados...');
+    const { data, error } = await sb.from('haus_crm_state').select('*').eq('id', 'main').single();
+    if (error || !data) {
+      console.warn('[Haus CRM] Sem dados no Supabase, iniciando base.');
+      // Tenta localStorage como fallback
+      try {
+        const a = localStorage.getItem('h4_ap');
+        const p = localStorage.getItem('h4_pi');
+        const n = localStorage.getItem('h4_ni');
+        if (a) AP = JSON.parse(a);
+        if (p) PIPE = JSON.parse(p);
+        if (n) NID = parseInt(n);
+      } catch(e2) {}
+      if (!AP.length) initBase(); else migrate();
+    } else {
+      AP = data.apolices || [];
       PIPE = data.pipeline || [];
-      NEGS = data.negs     || [];
-      SINS = data.sins     || [];
-      CONS = data.cons     || [];
-      NID  = data.next_id  || 300;
+      NEGS = data.negs || [];
+      SINS = data.sins || [];
+      CONS = data.cons || [];
+      NID = data.next_id || 300;
       migrate();
-      // Atualiza cache local com dados frescos do servidor
+      // Atualiza cache local
       try {
         localStorage.setItem('h4_ap', JSON.stringify(AP));
         localStorage.setItem('h4_pi', JSON.stringify(PIPE));
-        localStorage.setItem('h4_ng', JSON.stringify(NEGS));
-        localStorage.setItem('h4_si', JSON.stringify(SINS));
-        localStorage.setItem('h4_cs', JSON.stringify(CONS));
         localStorage.setItem('h4_ni', String(NID));
-        localStorage.setItem('h4_remote_ts', String(new Date(data.updated_at).getTime()));
       } catch(e) {}
     }
-    // Se error, já temos os dados do localStorage carregados acima
   } catch(e) {
-    console.warn('[Haus CRM] Supabase indisponível, usando cache local:', e.message);
-    setStatus('Offline — dados locais');
+    console.warn('[Haus CRM] Erro ao carregar Supabase:', e.message);
+    // Fallback localStorage
+    try {
+      const a = localStorage.getItem('h4_ap');
+      const p = localStorage.getItem('h4_pi');
+      const n = localStorage.getItem('h4_ni');
+      if (a) AP = JSON.parse(a);
+      if (p) PIPE = JSON.parse(p);
+      if (n) NID = parseInt(n);
+    } catch(e2) {}
+    if (!AP.length) initBase(); else migrate();
   }
 }
 
@@ -1629,14 +1624,9 @@ function salvarStatus(){
   if(nSA!==ap.status_apolice)ap.historico.push({data:ts,de:ap.status_apolice,para:nSA,tipo:'manual',motivo:mot});
   if(nSR!==ap.status_renovacao)ap.historico.push({data:ts,de:ap.status_renovacao||'',para:nSR,tipo:'manual',motivo:mot});
   ap.status_apolice=nSA;ap.status_renovacao=nSR;
-  // Atualizar vencimento e prêmio se alterados
-  const novoFim=document.getElementById('e-fim').value;
-  const novoPremi=Number(document.getElementById('e-premio').value)||0;
-  if(novoFim&&novoFim!==ap.fim){
-    ap.historico.push({data:ts,de:ap.fim,para:novoFim,tipo:'manual',motivo:`Vencimento corrigido: ${mot}`});
-    ap.fim=novoFim;
-  }
-  ap.premio=novoPremi;
+  const nFim=document.getElementById('e-fim').value;
+  if(nFim&&nFim!==ap.fim){ap.historico.push({data:ts,de:ap.fim,para:nFim,tipo:'manual',motivo:`Vencimento corrigido: ${mot}`});ap.fim=nFim;}
+  ap.premio=Number(document.getElementById('e-premio').value)||ap.premio;
   ap.apolice_substituta=document.getElementById('e-subs').value;
   ap.data_renovacao=document.getElementById('e-dtr').value;
   ap.proxima_acao=document.getElementById('e-pa').value;
@@ -2037,7 +2027,7 @@ function salvarEditNeg(){
   n.obs=document.getElementById('en-obs').value;
   n.ts=new Date().toISOString();
   if(novoEst!==antEst){n.historico_neg=n.historico_neg||[];n.historico_neg.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'manual'});}
-  // Se fechou, converter em apólice automaticamente
+  // Se fechou, perguntar conversão
   if(novoEst==='Fechado'&&!n.ap_gerada_id){
     save();closeM('m-edit-neg');renderNovos();updateBadges();
     convNegId=editNegId;abrirConversao(n);
@@ -2161,10 +2151,8 @@ function onDPNovos(e,col,novoEst){
   card.historico_neg.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'drag'});
   card.ts=new Date().toISOString();
   save();renderNovos();updateBadges();
-  // Se arrastou para Fechado, abrir modal de conversão automaticamente
-  if(novoEst==='Fechado'&&!card.ap_gerada_id){
-    convNegId=card.id;abrirConversao(card);
-  }
+  // Se arrastou para Fechado, perguntar conversão
+  if(novoEst==='Fechado'&&!card.ap_gerada_id){convNegId=card.id;abrirConversao(card);}
 }
 
 
@@ -2172,85 +2160,67 @@ function onDPNovos(e,col,novoEst){
 // CONSÓRCIOS & VIDA
 // ================================================================
 const ESTAGIOS_CONS=['Lead identificado','Contato feito','Cotação em andamento','Proposta enviada','Em negociação','Fechado','Perdido'];
-let editConsId=null, convConsId=null;
-
+let editConsId=null;
 function openModalNovoConsorcio(){
   ['cs-nome','cs-cli','cs-seg','cs-pa','cs-dpa','cs-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('cs-val').value='';
-  document.getElementById('cs-est').value='Lead identificado';
-  document.getElementById('cs-cat').value='Consórcio Imóvel';
-  document.getElementById('cs-resp').value='';
+  document.getElementById('cs-val').value='';document.getElementById('cs-est').value='Lead identificado';
+  document.getElementById('cs-cat').value='Consórcio Imóvel';document.getElementById('cs-resp').value='';
   openM('m-novo-consorcio');
 }
 function salvarNovoConsorcio(){
   const cli=document.getElementById('cs-cli').value.trim();
-  const nome=document.getElementById('cs-nome').value.trim()||`Nova oportunidade — ${cli}`;
   if(!cli){alert('Preencha o cliente.');return;}
-  CONS.push({
-    id:NID++,nome,cliente:cli,
-    categoria:document.getElementById('cs-cat').value||'',
-    seguradora:document.getElementById('cs-seg').value||'',
-    valor:Number(document.getElementById('cs-val').value)||0,
-    estagio:document.getElementById('cs-est').value,
-    responsavel:document.getElementById('cs-resp').value||'',
-    proxima_acao:document.getElementById('cs-pa').value||'',
-    data_proxima_acao:document.getElementById('cs-dpa').value||'',
-    obs:document.getElementById('cs-obs').value||'',
-    ap_gerada_id:null,historico_cons:[],ts:new Date().toISOString()
-  });
+  const nome=document.getElementById('cs-nome').value.trim()||`Nova oportunidade — ${cli}`;
+  CONS.push({id:NID++,nome,cliente:cli,categoria:document.getElementById('cs-cat').value||'',
+    seguradora:document.getElementById('cs-seg').value||'',valor:Number(document.getElementById('cs-val').value)||0,
+    estagio:document.getElementById('cs-est').value,responsavel:document.getElementById('cs-resp').value||'',
+    proxima_acao:document.getElementById('cs-pa').value||'',data_proxima_acao:document.getElementById('cs-dpa').value||'',
+    obs:document.getElementById('cs-obs').value||'',ap_gerada_id:null,historico_cons:[],ts:new Date().toISOString()});
   save();closeM('m-novo-consorcio');renderConsorcios();updateBadges();
 }
 function abrirEditConsorcio(id){
   editConsId=id;const c=CONS.find(x=>Number(x.id)===Number(id));if(!c)return;
   document.getElementById('ec-title').textContent='Editar — '+c.cliente;
   document.getElementById('ec-sub').textContent=c.categoria||'';
-  document.getElementById('ec-nome').value=c.nome||'';
-  document.getElementById('ec-cli').value=c.cliente||'';
+  ['ec-nome','ec-cli','ec-seg','ec-obs','ec-pa','ec-resp'].forEach(f=>{
+    const k=f.replace('ec-','').replace('nome','nome').replace('cli','cliente').replace('seg','seguradora').replace('obs','obs').replace('pa','proxima_acao').replace('resp','responsavel');
+    document.getElementById(f).value=c[{nome:'nome',cli:'cliente',seg:'seguradora',obs:'obs',pa:'proxima_acao',resp:'responsavel'}[f.replace('ec-','')]]||'';
+  });
   document.getElementById('ec-cat').value=c.categoria||'Consórcio Imóvel';
-  document.getElementById('ec-seg').value=c.seguradora||'';
   document.getElementById('ec-val').value=c.valor||'';
   document.getElementById('ec-est').value=c.estagio||'Lead identificado';
-  document.getElementById('ec-resp').value=c.responsavel||'';
-  document.getElementById('ec-pa').value=c.proxima_acao||'';
   document.getElementById('ec-dpa').value=c.data_proxima_acao||'';
-  document.getElementById('ec-obs').value=c.obs||'';
   const isVida=c.categoria&&c.categoria.startsWith('Seguro de Vida');
-  const banner=document.getElementById('ec-fechado-banner');
-  banner.style.display=(c.estagio==='Fechado'&&!c.ap_gerada_id&&isVida)?'':'none';
+  document.getElementById('ec-fechado-banner').style.display=(c.estagio==='Fechado'&&!c.ap_gerada_id&&isVida)?'':'none';
   openM('m-edit-consorcio');
+}
+function _fillConsorcioConvModal(c){
+  document.getElementById('cv-cli').value=c.cliente||'';document.getElementById('cv-tipo').value='Vida';
+  document.getElementById('cv-seg').value=c.seguradora||'';document.getElementById('cv-pre').value=c.valor||'';
+  document.getElementById('cv-resp').value=c.responsavel||'';document.getElementById('cv-obs').value=c.obs||'';
+  document.getElementById('cv-num').value='';document.getElementById('cv-ini').value=today();
+  const t=new Date();t.setFullYear(t.getFullYear()+1);document.getElementById('cv-fim').value=t.toISOString().substring(0,10);
+  convConsId=editConsId;
+}
+function converterConsorcioEmApolice(){
+  const c=CONS.find(x=>x.id===editConsId);if(!c)return;
+  closeM('m-edit-consorcio');_fillConsorcioConvModal(c);openM('m-conv-ap');
 }
 function salvarEditConsorcio(){
   const c=CONS.find(x=>x.id===editConsId);if(!c)return;
-  const novoEst=document.getElementById('ec-est').value;
-  const antEst=c.estagio;
+  const novoEst=document.getElementById('ec-est').value,antEst=c.estagio;
   c.nome=document.getElementById('ec-nome').value.trim()||c.nome;
   c.cliente=document.getElementById('ec-cli').value.trim()||c.cliente;
-  c.categoria=document.getElementById('ec-cat').value;
-  c.seguradora=document.getElementById('ec-seg').value;
-  c.valor=Number(document.getElementById('ec-val').value)||0;
-  c.estagio=novoEst;
-  c.responsavel=document.getElementById('ec-resp').value;
-  c.proxima_acao=document.getElementById('ec-pa').value;
-  c.data_proxima_acao=document.getElementById('ec-dpa').value;
-  c.obs=document.getElementById('ec-obs').value;
+  c.categoria=document.getElementById('ec-cat').value;c.seguradora=document.getElementById('ec-seg').value;
+  c.valor=Number(document.getElementById('ec-val').value)||0;c.estagio=novoEst;
+  c.responsavel=document.getElementById('ec-resp').value;c.proxima_acao=document.getElementById('ec-pa').value;
+  c.data_proxima_acao=document.getElementById('ec-dpa').value;c.obs=document.getElementById('ec-obs').value;
   c.ts=new Date().toISOString();
   if(novoEst!==antEst){c.historico_cons=c.historico_cons||[];c.historico_cons.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'manual'});}
   const isVida=c.categoria&&c.categoria.startsWith('Seguro de Vida');
   if(novoEst==='Fechado'&&!c.ap_gerada_id&&isVida){
     save();closeM('m-edit-consorcio');renderConsorcios();updateBadges();
-    convConsId=editConsId;
-    document.getElementById('cv-cli').value=c.cliente||'';
-    document.getElementById('cv-tipo').value='Vida';
-    document.getElementById('cv-seg').value=c.seguradora||'';
-    document.getElementById('cv-pre').value=c.valor||'';
-    document.getElementById('cv-resp').value=c.responsavel||'';
-    document.getElementById('cv-obs').value=c.obs||'';
-    document.getElementById('cv-num').value='';
-    document.getElementById('cv-ini').value=today();
-    const t=new Date();t.setFullYear(t.getFullYear()+1);
-    document.getElementById('cv-fim').value=t.toISOString().substring(0,10);
-    openM('m-conv-ap');
-    return;
+    _fillConsorcioConvModal(c);openM('m-conv-ap');return;
   }
   save();closeM('m-edit-consorcio');renderConsorcios();updateBadges();
 }
@@ -2260,88 +2230,56 @@ function excluirConsorcio(){
   CONS.splice(CONS.findIndex(x=>x.id===editConsId),1);
   save();closeM('m-edit-consorcio');renderConsorcios();updateBadges();
 }
-function converterConsorcioEmApolice(){
-  const c=CONS.find(x=>x.id===editConsId);if(!c)return;
-  closeM('m-edit-consorcio');
-  document.getElementById('cv-cli').value=c.cliente||'';
-  document.getElementById('cv-tipo').value='Vida';
-  document.getElementById('cv-seg').value=c.seguradora||'';
-  document.getElementById('cv-pre').value=c.valor||'';
-  document.getElementById('cv-resp').value=c.responsavel||'';
-  document.getElementById('cv-obs').value=c.obs||'';
-  document.getElementById('cv-num').value='';
-  document.getElementById('cv-ini').value=today();
-  const t=new Date();t.setFullYear(t.getFullYear()+1);
-  document.getElementById('cv-fim').value=t.toISOString().substring(0,10);
-  convConsId=editConsId;
-  openM('m-conv-ap');
-}
 function renderConsorcios(){
   const ab=CONS.filter(c=>!['Fechado','Perdido'].includes(c.estagio));
-  const fn=CONS.filter(c=>c.estagio==='Fechado');
-  const pd=CONS.filter(c=>c.estagio==='Perdido');
+  const fn=CONS.filter(c=>c.estagio==='Fechado'),pd=CONS.filter(c=>c.estagio==='Perdido');
   document.getElementById('consorcio-m').innerHTML=`
     <div class="mc mc-b"><div class="ml">Em aberto</div><div class="mv mv-b">${ab.length}</div><div class="ms">${R(ab.reduce((s,c)=>s+Number(c.valor||0),0))}</div></div>
     <div class="mc mc-g"><div class="ml">Fechados</div><div class="mv mv-g">${fn.length}</div><div class="ms">${R(fn.reduce((s,c)=>s+Number(c.valor||0),0))}</div></div>
     <div class="mc mc-r"><div class="ml">Perdidos</div><div class="mv mv-r">${pd.length}</div><div class="ms">${R(pd.reduce((s,c)=>s+Number(c.valor||0),0))}</div></div>
-    <div class="mc mc-gr"><div class="ml">Taxa conversão</div><div class="mv">${CONS.length>0?Math.round(fn.length/CONS.length*100):0}%</div><div class="ms">${fn.length} de ${CONS.length}</div></div>
-  `;
+    <div class="mc mc-gr"><div class="ml">Taxa conversão</div><div class="mv">${CONS.length>0?Math.round(fn.length/CONS.length*100):0}%</div><div class="ms">${fn.length} de ${CONS.length}</div></div>`;
   const board=document.getElementById('consorcio-board');
   board.innerHTML=ESTAGIOS_CONS.map(est=>{
-    const cards=CONS.filter(c=>c.estagio===est);
-    const tot=cards.reduce((s,c)=>s+Number(c.valor||0),0);
+    const cards=CONS.filter(c=>c.estagio===est),tot=cards.reduce((s,c)=>s+Number(c.valor||0),0);
     const isF=est==='Fechado',isP=est==='Perdido';
-    const colCls=isF?'pipe-col pipe-col-won':isP?'pipe-col pipe-col-lost':'pipe-col';
-    return`<div class="${colCls}" data-est="${est}" data-pipe="consorcios"
+    return`<div class="${isF?'pipe-col pipe-col-won':isP?'pipe-col pipe-col-lost':'pipe-col'}" data-est="${est}"
         ondragover="onDO(event,this)" ondragleave="onDL(this)" ondrop="onDPCons(event,this,'${est}')">
       <div class="phd"><span class="pnm">${est}</span><span class="pcnt">${cards.length}</span></div>
       <div class="ptot">${R(tot)}</div>
       ${cards.map(c=>{
-        const fuLbl=c.data_proxima_acao?(()=>{const df=dd(c.data_proxima_acao);return df<0?`<div style="font-size:10px;color:var(--r)">FU: ${Math.abs(df)}d atraso</div>`:df===0?`<div style="font-size:10px;color:var(--r)">FU: Hoje</div>`:df<=3?`<div style="font-size:10px;color:var(--a)">FU: ${df}d</div>`:''})():'';
         const isVida=c.categoria&&c.categoria.startsWith('Seguro de Vida');
-        const catColor=isVida?'var(--tl)':'var(--bl)';
-        const catBg=isVida?'var(--tlb)':'var(--blb)';
-        const catBr=isVida?'var(--tlbr)':'var(--blbr)';
-        const hasAp=c.ap_gerada_id?`<span style="font-size:9px;background:var(--gb);color:var(--g);border:1px solid var(--gbr);padding:0 4px;border-radius:3px">✓ Apólice criada</span>`:'';
-        return`<div class="pcard" draggable="true" data-cid="${c.id}" data-pipe="consorcios"
-            ondragstart="onDSCons(event)" ondragend="onDE(event)">
+        const col=isVida?'var(--tl)':'var(--bl)',bg=isVida?'var(--tlb)':'var(--blb)',br=isVida?'var(--tlbr)':'var(--blbr)';
+        let fu='';if(c.data_proxima_acao){const df=dd(c.data_proxima_acao);fu=df<0?`<div style="font-size:10px;color:var(--r)">FU: ${Math.abs(df)}d atraso</div>`:df===0?`<div style="font-size:10px;color:var(--r)">FU: Hoje</div>`:df<=3?`<div style="font-size:10px;color:var(--a)">FU: ${df}d</div>`:'';}
+        return`<div class="pcard" draggable="true" data-cid="${c.id}" ondragstart="onDSCons(event)" ondragend="onDE(event)">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px">
-            <span style="font-size:9px;background:${catBg};color:${catColor};border:1px solid ${catBr};padding:0 5px;border-radius:3px;font-weight:600">${c.categoria||'CONSÓRCIO'}</span>
-            <button onclick="event.stopPropagation();abrirEditConsorcio(${c.id})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;padding:0" title="Editar">✏</button>
+            <span style="font-size:9px;background:${bg};color:${col};border:1px solid ${br};padding:0 5px;border-radius:3px;font-weight:600">${c.categoria||'CONSÓRCIO'}</span>
+            <button onclick="event.stopPropagation();abrirEditConsorcio(${c.id})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;padding:0">✏</button>
           </div>
           <div class="pc-n">${c.cliente}</div>
           ${c.seguradora?`<div style="font-size:10px;color:var(--tx3)">${c.seguradora}</div>`:''}
           <div class="pc-row" style="margin-top:5px"><span class="pc-val">${c.valor>0?R(c.valor):'—'}</span></div>
-          ${fuLbl}${hasAp?`<div style="margin-top:4px">${hasAp}</div>`:''}
+          ${fu}${c.ap_gerada_id?`<div style="margin-top:4px"><span style="font-size:9px;background:var(--gb);color:var(--g);border:1px solid var(--gbr);padding:0 4px;border-radius:3px">✓ Apólice criada</span></div>`:''}
         </div>`;
       }).join('')}
     </div>`;
   }).join('');
 }
 function onDSCons(e){
-  e.stopPropagation();
-  const card=e.currentTarget;card.classList.add('dragging');
-  e.dataTransfer.effectAllowed='move';
-  e.dataTransfer.setData('cons-id',String(card.dataset.cid));
+  e.stopPropagation();e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('cons-id',String(e.currentTarget.dataset.cid));
 }
 function onDPCons(e,col,novoEst){
   e.preventDefault();e.stopPropagation();col.classList.remove('dov','dov-w','dov-l');
   const cid=parseInt(e.dataTransfer.getData('cons-id'),10);
-  const card=CONS.find(c=>Number(c.id)===cid);
-  if(!card||card.estagio===novoEst)return;
-  const antEst=card.estagio;
-  card.estagio=novoEst;card.ts=new Date().toISOString();
-  card.historico_cons=card.historico_cons||[];
-  card.historico_cons.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'drag'});
+  const card=CONS.find(c=>Number(c.id)===cid);if(!card||card.estagio===novoEst)return;
+  const antEst=card.estagio;card.estagio=novoEst;card.ts=new Date().toISOString();
+  card.historico_cons=card.historico_cons||[];card.historico_cons.push({data:new Date().toISOString(),de:antEst,para:novoEst,tipo:'drag'});
   const isVida=card.categoria&&card.categoria.startsWith('Seguro de Vida');
   if(novoEst==='Fechado'&&!card.ap_gerada_id&&isVida){
-    save();renderConsorcios();updateBadges();
-    editConsId=card.id;converterConsorcioEmApolice();
-    return;
+    save();renderConsorcios();updateBadges();editConsId=card.id;converterConsorcioEmApolice();return;
   }
   save();renderConsorcios();updateBadges();
 }
-
 // ================================================================
 // SINISTROS — funções
 // ================================================================
